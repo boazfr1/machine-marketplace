@@ -9,9 +9,9 @@ import (
 )
 
 func RouteList(mux *http.ServeMux) {
-    mux.HandleFunc("/v1/health", middleware.Get(health));
-	mux.HandleFunc("/v1/boaz", middleware.Get(boaz));
-	mux.HandleFunc("/v1/sign-up", middleware.Post(user.SignUp))
+    mux.HandleFunc("api/v1/health", middleware.Get(health));
+	mux.HandleFunc("api/v1/boaz", middleware.Get(boaz));
+	mux.HandleFunc("api/v1/sign-up", middleware.Post(user.SignUp))
 }
 
 func health(res http.ResponseWriter, req *http.Request) {
