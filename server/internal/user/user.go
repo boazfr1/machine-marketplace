@@ -8,6 +8,24 @@ import (
 	"strings"
 )
 
+func Login(res http.ResponseWriter, req *http.Request) {
+    var params struct {
+        Name     string `json:"name"`
+        Email    string `json:"email"`
+        Password string `json:"password"`
+    }
+
+	if err := json.NewDecoder(req.Body).Decode(&params); err != nil {
+		http.Error(res, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if params.Name == "" || params.Email == "" || params.Password == "" {
+        http.Error(res, "Name, email, and password are required", http.StatusBadRequest)
+        return
+    }
+}
+
 func SignUp(res http.ResponseWriter, req *http.Request) {
 	var params struct {
         Name     string `json:"name"`
