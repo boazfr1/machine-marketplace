@@ -1,0 +1,11 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries: "./query.sql"
+    schema: "./schema.sql"
+    database:
+      uri: "postgresql://postgres:postgres@localhost:5432/machine_market"
+    gen:
+      go:
+        package: "db"
+        out: "generated"
