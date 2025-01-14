@@ -1,6 +1,7 @@
 package user
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	db "machine-marketplace/internal/DB/generated"
@@ -37,7 +38,23 @@ func Login(res http.ResponseWriter, req *http.Request) {
 		json.NewEncoder(res).Encode(map[string]string{
 			"message": "user not found",
 		})
-		return // Add return here
+		return
+	}
+
+	// Remove the \x prefix and decode the hex string
+	passwordString := string(userByEmail.Password)
+	if strings.HasPrefix(passwordString, `\x`) {
+		passwordString = passwordString[2:] // Remove \x prefix
+		decodedBytes, err := hex.DecodeString(passwordString)
+		if err != nil {
+			fmt.Println("Failed to decode password:", err)
+			res.Header().Set("Content-Type", "application/json")
+			json.NewEncoder(res).Encode(map[string]string{
+				"message": "Internal server error",
+			})
+			return
+		}
+		userByEmail.Password = decodedBytes
 	}
 
 	if err := bcrypt.CompareHashAndPassword(userByEmail.Password, []byte(params.Password)); err != nil {
@@ -46,14 +63,13 @@ func Login(res http.ResponseWriter, req *http.Request) {
 		json.NewEncoder(res).Encode(map[string]string{
 			"message": "user or password are incorrect",
 		})
-		return // Add return here
+		return
 	}
 
-	// If we get here, login was successful
 	response := map[string]interface{}{
 		"message": "Login successful",
 		"user": map[string]string{
-			"name":  userByEmail.Name, // Use the name from database instead of params
+			"name":  userByEmail.Name,
 			"email": userByEmail.Email,
 		},
 	}
