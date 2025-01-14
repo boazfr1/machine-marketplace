@@ -3,16 +3,14 @@ import axios from 'axios';
 import './SignupForm.css';
 
 interface SignupFormData {
-  firstName: string;
-  lastName: string;
+  Name: string;
   email: string;
   password: string;
   confirmPassword: string;
 }
 
 interface FormErrors {
-  firstName?: string;
-  lastName?: string;
+  Name?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -21,8 +19,7 @@ interface FormErrors {
 
 const SignupForm = () => {
   const [formData, setFormData] = useState<SignupFormData>({
-    firstName: '',
-    lastName: '',
+    Name: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -34,12 +31,8 @@ const SignupForm = () => {
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
     
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = 'First name is required';
-    }
-
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
+    if (!formData.Name.trim()) {
+      newErrors.Name = 'First name is required';
     }
     
     if (!formData.email) {
@@ -76,8 +69,7 @@ const SignupForm = () => {
 
     // Create the payload without confirmPassword
     const signupData = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
+      Name: formData.Name,
       email: formData.email,
       password: formData.password
     };
@@ -124,29 +116,16 @@ const SignupForm = () => {
         
         <div className="name-group">
           <div className="form-group">
-            <label htmlFor="firstName">First Name</label>
+            <label htmlFor="Name">Name</label>
             <input
-              id="firstName"
+              id="Name"
               type="text"
-              name="firstName"
-              value={formData.firstName}
+              name="Name"
+              value={formData.Name}
               onChange={handleChange}
               autoComplete="given-name"
             />
-            {errors.firstName && <div className="error-message">{errors.firstName}</div>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="lastName">Last Name</label>
-            <input
-              id="lastName"
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              autoComplete="family-name"
-            />
-            {errors.lastName && <div className="error-message">{errors.lastName}</div>}
+            {errors.Name && <div className="error-message">{errors.Name}</div>}
           </div>
         </div>
 

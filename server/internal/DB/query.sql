@@ -1,7 +1,7 @@
 -- query.sql
 -- name: CreateUser :one
 INSERT INTO users (name, email, password)
-VALUES ($1, $2, $3)
+VALUES ($1, $2, $3::bytea)
 RETURNING *;
 
 -- name: GetUserByID :one

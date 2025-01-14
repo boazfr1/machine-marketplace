@@ -79,19 +79,19 @@ func (q *Queries) CreateMachine(ctx context.Context, arg CreateMachineParams) (M
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (name, email, password)
-VALUES ($1, $2, $3)
+VALUES ($1, $2, $3::bytea)
 RETURNING id, name, email, password
 `
 
 type CreateUserParams struct {
-	Name     string
-	Email    string
-	Password string
+	Name    string
+	Email   string
+	Column3 []byte
 }
 
 // query.sql
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.Name, arg.Email, arg.Password)
+	row := q.db.QueryRowContext(ctx, createUser, arg.Name, arg.Email, arg.Column3)
 	var i User
 	err := row.Scan(
 		&i.ID,
