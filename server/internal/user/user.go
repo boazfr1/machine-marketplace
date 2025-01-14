@@ -2,6 +2,7 @@ package user
 
 import (
 	"encoding/json"
+	"fmt"
 	db "machine-marketplace/internal/DB/generated"
 	"machine-marketplace/pkg/database"
 	"net/http"
@@ -18,57 +19,47 @@ func Login(res http.ResponseWriter, req *http.Request) {
 	}
 
 	if err := json.NewDecoder(req.Body).Decode(&params); err != nil {
+		fmt.Println("Invalid request body")
 		http.Error(res, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	if params.Name == "" || params.Email == "" || params.Password == "" {
-		http.Error(res, "Name, email, and password are required", http.StatusBadRequest)
+	if params.Email == "" || params.Password == "" {
+		fmt.Println("Email and password are required")
+		http.Error(res, "Email and password are required", http.StatusBadRequest)
 		return
 	}
 
 	userByEmail, err := database.Queries.GetUserByEmail(req.Context(), params.Email)
 	if err != nil {
-		data := map[string]string{
-			"massage": "user not exist",
-		}
-
-		js, err := json.Marshal(data)
-		if err != nil {
-			http.Error(res, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		}
-
+		fmt.Println("User not found:", err)
 		res.Header().Set("Content-Type", "application/json")
-		res.Write(js)
+		json.NewEncoder(res).Encode(map[string]string{
+			"message": "user not found",
+		})
+		return // Add return here
 	}
 
 	if err := bcrypt.CompareHashAndPassword(userByEmail.Password, []byte(params.Password)); err != nil {
-		data := map[string]string{
-			"massage": "user or password are incorrect",
-		}
-
-		js, err := json.Marshal(data)
-		if err != nil {
-			http.Error(res, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		}
-
+		fmt.Println("Password comparison failed:", err)
 		res.Header().Set("Content-Type", "application/json")
-		res.Write(js)
+		json.NewEncoder(res).Encode(map[string]string{
+			"message": "user or password are incorrect",
+		})
+		return // Add return here
 	}
 
-	data := map[string]string{
-		"Name":  params.Name,
-		"Email": params.Email,
-	}
-
-	js, err := json.Marshal(data)
-	if err != nil {
-		http.Error(res, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+	// If we get here, login was successful
+	response := map[string]interface{}{
+		"message": "Login successful",
+		"user": map[string]string{
+			"name":  userByEmail.Name, // Use the name from database instead of params
+			"email": userByEmail.Email,
+		},
 	}
 
 	res.Header().Set("Content-Type", "application/json")
-	res.Write(js)
-
+	json.NewEncoder(res).Encode(response)
 }
 
 func SignUp(res http.ResponseWriter, req *http.Request) {
