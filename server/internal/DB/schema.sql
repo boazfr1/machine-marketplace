@@ -1,3 +1,4 @@
+-- schema.sql
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -21,5 +22,7 @@ CREATE TABLE machines (
     ram INTEGER NOT NULL,
     cpu INTEGER NOT NULL,
     memory INTEGER NOT NULL,
-    key TEXT
+    key TEXT,
+    host VARCHAR(255) NOT NULL,
+    ssh_user VARCHAR(255) NOT NULL
 );

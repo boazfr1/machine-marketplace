@@ -51,8 +51,14 @@ const LoginForm = () => {
     setErrors({});
 
     try {
-      const response = await axios.post('http://localhost:3001/api/v1/login', formData);
+      const response = await axios.post('http://localhost:3001/api/v1/login', formData, {
+        withCredentials: true,
+      });
       console.log('Sign up successful:', response.data);
+      const user = await axios.get('http://localhost:3001/api/v1/user', {
+        withCredentials: true,
+      })
+      console.log('User:', user.data);
       // Handle successful signup (e.g., redirect or show success message)
       
     } catch (error) {

@@ -15,7 +15,7 @@ var (
 
 func Init() error {
 	var err error
-	DB, err = sql.Open("postgres", "postgresql://postgres:postgres@localhost:5432/machine_market")
+	DB, err = sql.Open("postgres", "postgresql://postgres:postgres@localhost:5432/machine_market?sslmode=disable")
 	if err != nil {
 		return err
 	}

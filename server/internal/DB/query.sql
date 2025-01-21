@@ -19,9 +19,27 @@ RETURNING *;
 SELECT * FROM credit_cards WHERE owner_id = $1;
 
 -- name: CreateMachine :one
-INSERT INTO machines (name, owner_id, ram, cpu, memory)
-VALUES ($1, $2, $3, $4, $5)
-RETURNING *;
+INSERT INTO machines (
+    name,
+    ram,
+    cpu,
+    memory,
+    key,
+    owner_id,
+    buyer_id,
+    host,
+    ssh_user
+) VALUES (
+    $1,
+    $2,
+    $3,
+    $4,
+    $5,
+    $6,
+    NULL,
+    $7,
+    $8
+) RETURNING *;
 
 -- name: GetMachineByID :one
 SELECT * FROM machines WHERE id = $1;

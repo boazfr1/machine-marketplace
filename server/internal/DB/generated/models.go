@@ -25,6 +25,8 @@ type Machine struct {
 	Cpu     int32
 	Memory  int32
 	Key     sql.NullString
+	Host    string
+	SshUser string
 }
 
 type User struct {

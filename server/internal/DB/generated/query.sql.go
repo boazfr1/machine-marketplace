@@ -42,26 +42,50 @@ func (q *Queries) CreateCreditCard(ctx context.Context, arg CreateCreditCardPara
 }
 
 const createMachine = `-- name: CreateMachine :one
-INSERT INTO machines (name, owner_id, ram, cpu, memory)
-VALUES ($1, $2, $3, $4, $5)
-RETURNING id, name, buyer_id, owner_id, ram, cpu, memory, key
+INSERT INTO machines (
+    name,
+    ram,
+    cpu,
+    memory,
+    key,
+    owner_id,
+    buyer_id,
+    host,
+    ssh_user
+) VALUES (
+    $1,
+    $2,
+    $3,
+    $4,
+    $5,
+    $6,
+    NULL,
+    $7,
+    $8
+) RETURNING id, name, buyer_id, owner_id, ram, cpu, memory, key, host, ssh_user
 `
 
 type CreateMachineParams struct {
 	Name    string
-	OwnerID int32
 	Ram     int32
 	Cpu     int32
 	Memory  int32
+	Key     sql.NullString
+	OwnerID int32
+	Host    string
+	SshUser string
 }
 
 func (q *Queries) CreateMachine(ctx context.Context, arg CreateMachineParams) (Machine, error) {
 	row := q.db.QueryRowContext(ctx, createMachine,
 		arg.Name,
-		arg.OwnerID,
 		arg.Ram,
 		arg.Cpu,
 		arg.Memory,
+		arg.Key,
+		arg.OwnerID,
+		arg.Host,
+		arg.SshUser,
 	)
 	var i Machine
 	err := row.Scan(
@@ -73,6 +97,8 @@ func (q *Queries) CreateMachine(ctx context.Context, arg CreateMachineParams) (M
 		&i.Cpu,
 		&i.Memory,
 		&i.Key,
+		&i.Host,
+		&i.SshUser,
 	)
 	return i, err
 }
@@ -136,7 +162,7 @@ func (q *Queries) GetCreditCardsByOwnerID(ctx context.Context, ownerID int32) ([
 }
 
 const getMachineByID = `-- name: GetMachineByID :one
-SELECT id, name, buyer_id, owner_id, ram, cpu, memory, key FROM machines WHERE id = $1
+SELECT id, name, buyer_id, owner_id, ram, cpu, memory, key, host, ssh_user FROM machines WHERE id = $1
 `
 
 func (q *Queries) GetMachineByID(ctx context.Context, id int32) (Machine, error) {
@@ -151,6 +177,8 @@ func (q *Queries) GetMachineByID(ctx context.Context, id int32) (Machine, error)
 		&i.Cpu,
 		&i.Memory,
 		&i.Key,
+		&i.Host,
+		&i.SshUser,
 	)
 	return i, err
 }
@@ -221,7 +249,7 @@ func (q *Queries) GetUserCreditCards(ctx context.Context, ownerID int32) ([]Cred
 }
 
 const listAvailableMachines = `-- name: ListAvailableMachines :many
-SELECT id, name, buyer_id, owner_id, ram, cpu, memory, key FROM machines WHERE buyer_id IS NULL
+SELECT id, name, buyer_id, owner_id, ram, cpu, memory, key, host, ssh_user FROM machines WHERE buyer_id IS NULL
 `
 
 func (q *Queries) ListAvailableMachines(ctx context.Context) ([]Machine, error) {
@@ -242,6 +270,8 @@ func (q *Queries) ListAvailableMachines(ctx context.Context) ([]Machine, error) 
 			&i.Cpu,
 			&i.Memory,
 			&i.Key,
+			&i.Host,
+			&i.SshUser,
 		); err != nil {
 			return nil, err
 		}
@@ -257,7 +287,7 @@ func (q *Queries) ListAvailableMachines(ctx context.Context) ([]Machine, error) 
 }
 
 const listMachinesByBuyerID = `-- name: ListMachinesByBuyerID :many
-SELECT id, name, buyer_id, owner_id, ram, cpu, memory, key FROM machines WHERE buyer_id = $1
+SELECT id, name, buyer_id, owner_id, ram, cpu, memory, key, host, ssh_user FROM machines WHERE buyer_id = $1
 `
 
 func (q *Queries) ListMachinesByBuyerID(ctx context.Context, buyerID sql.NullInt32) ([]Machine, error) {
@@ -278,6 +308,8 @@ func (q *Queries) ListMachinesByBuyerID(ctx context.Context, buyerID sql.NullInt
 			&i.Cpu,
 			&i.Memory,
 			&i.Key,
+			&i.Host,
+			&i.SshUser,
 		); err != nil {
 			return nil, err
 		}
@@ -293,7 +325,7 @@ func (q *Queries) ListMachinesByBuyerID(ctx context.Context, buyerID sql.NullInt
 }
 
 const listMachinesByOwnerID = `-- name: ListMachinesByOwnerID :many
-SELECT id, name, buyer_id, owner_id, ram, cpu, memory, key FROM machines WHERE owner_id = $1
+SELECT id, name, buyer_id, owner_id, ram, cpu, memory, key, host, ssh_user FROM machines WHERE owner_id = $1
 `
 
 func (q *Queries) ListMachinesByOwnerID(ctx context.Context, ownerID int32) ([]Machine, error) {
@@ -314,6 +346,8 @@ func (q *Queries) ListMachinesByOwnerID(ctx context.Context, ownerID int32) ([]M
 			&i.Cpu,
 			&i.Memory,
 			&i.Key,
+			&i.Host,
+			&i.SshUser,
 		); err != nil {
 			return nil, err
 		}
@@ -332,7 +366,7 @@ const updateMachineBuyer = `-- name: UpdateMachineBuyer :one
 UPDATE machines 
 SET buyer_id = $1, key = $2
 WHERE id = $3 AND buyer_id IS NULL
-RETURNING id, name, buyer_id, owner_id, ram, cpu, memory, key
+RETURNING id, name, buyer_id, owner_id, ram, cpu, memory, key, host, ssh_user
 `
 
 type UpdateMachineBuyerParams struct {
@@ -353,6 +387,8 @@ func (q *Queries) UpdateMachineBuyer(ctx context.Context, arg UpdateMachineBuyer
 		&i.Cpu,
 		&i.Memory,
 		&i.Key,
+		&i.Host,
+		&i.SshUser,
 	)
 	return i, err
 }
