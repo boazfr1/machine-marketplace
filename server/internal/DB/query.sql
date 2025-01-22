@@ -48,7 +48,7 @@ SELECT * FROM machines WHERE id = $1;
 SELECT * FROM machines WHERE owner_id = $1;
 
 -- name: ListMachinesByBuyerID :many
-SELECT * FROM machines WHERE buyer_id = $1;
+SELECT ram, cpu, memory, name FROM machines WHERE buyer_id = $1;
 
 -- name: ListAvailableMachines :many
 SELECT * FROM machines WHERE buyer_id IS NULL;
