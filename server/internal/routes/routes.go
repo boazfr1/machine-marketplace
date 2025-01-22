@@ -18,7 +18,7 @@ func RouteList(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/user", middleware.Get(user.User))
 	mux.HandleFunc("/api/v1/machine", middleware.Get(machine.ListOfFreeMachines))
 	mux.HandleFunc("/api/v1/machine/create", middleware.Post(machine.CreateMachine))
-	mux.HandleFunc("/api/v1/machine/connect", middleware.Post(machine.CreateMachine))
+	mux.HandleFunc("/api/v1/machine/connect", middleware.Post(machine.WebSocketHandler))
 }
 
 func health(res http.ResponseWriter, req *http.Request) {
