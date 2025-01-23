@@ -1,0 +1,48 @@
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background-color: #1a1a1a;
+    color: white;
+    padding: 1rem;
+  }
+  
+  .sidebar-header {
+    margin-bottom: 2rem;
+  }
+  
+  .sidebar-header h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .menu-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+  }
+  
+  .menu-button:hover {
+    background-color: #333;
+  }
+  
+  .icon {
+    font-size: 1.2rem;
+  }
+  
+  .label {
+    font-size: 1rem;
+  }

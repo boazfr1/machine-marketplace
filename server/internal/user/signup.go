@@ -11,12 +11,8 @@ import (
 )
 
 func SignUp(res http.ResponseWriter, req *http.Request) {
-	var params struct {
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
+	var params userParams
+	
 	if err := json.NewDecoder(req.Body).Decode(&params); err != nil {
 		http.Error(res, "Invalid request body", http.StatusBadRequest)
 		return

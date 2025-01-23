@@ -26,7 +26,7 @@ var Manager = &ConnectionManager{
 	connections: make(map[string]*Connection),
 }
 
-type MachineParams struct {
+type chosenMachineParams struct {
 	Key     string `json:"key"`
 	Host    string `json:"host"`
 	SshUser string `json:"ssh_user"`
@@ -39,7 +39,7 @@ var Upgrader = websocket.Upgrader{
 }
 
 func WebSocketHandler(res http.ResponseWriter, req *http.Request) {
-	var params MachineParams
+	var params chosenMachineParams
 	if err := json.NewDecoder(req.Body).Decode(&params); err != nil {
 		http.Error(res, "Invalid request body", http.StatusBadRequest)
 		return

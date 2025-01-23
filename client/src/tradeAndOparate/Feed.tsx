@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Machine from "./Machine";
 import "./Feed.css";
 import { useNavigate } from "react-router-dom";
+import Sidebar from "../dashboard/SideBar";
 
 
 type MachineType = {
@@ -79,22 +80,33 @@ const Feed = () => {
     }
 
     return (
+        <div className="feed-page">
+            <Sidebar/>
+            {availableMachine ?
+            <div className={`feed-container ${isLoading ? 'loading' : ''}`}>
+                {!isLoading && availableMachine.map((machine, index) => (
+                    <div
+                        key={index}
+                        onClick={() => navigateToMachinePage(machine)}
+                    >
+                        <Machine
+                            Name={machine.Name}
+                            RAM={machine.RAM}
+                            CPU={machine.CPU}
+                            Storage={machine.Storage}
+                        />
+                    </div>
+                ))}
+            </div> : 
+            <div>
+                There is no available machines to show
+            </div>
+            }
+                <div>
 
-        <div className={`feed-container ${isLoading ? 'loading' : ''}`}>
-            {!isLoading && availableMachine.map((machine, index) => (
-                <div
-                    key={index}
-                    onClick={() => navigateToMachinePage(machine)}
-                >
-                    <Machine
-                        Name={machine.Name}
-                        RAM={machine.RAM}
-                        CPU={machine.CPU}
-                        Storage={machine.Storage}
-                    />
                 </div>
-            ))}
         </div>
+
     );
 };
 

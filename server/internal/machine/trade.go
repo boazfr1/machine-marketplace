@@ -11,23 +11,26 @@ import (
 	"net/http"
 )
 
-func CreateMachine(res http.ResponseWriter, req *http.Request) {
-	var MachineParams struct {
-		Name    string `json:"name"`
-		Ram     int32  `json:"ram"`
-		Cpu     int32  `json:"cpu"`
-		Memory  int32  `json:"memory"`
-		Key     string `json:"key"`
-		Host    string `json:"host"`
-		SshUser string `json:"ssh_user"`
-	}
 
-	if err := json.NewDecoder(req.Body).Decode(&MachineParams); err != nil {
+type MachineParams struct {
+	Name    string `json:"name"`
+	Ram     int32  `json:"ram"`
+	Cpu     int32  `json:"cpu"`
+	Memory  int32  `json:"memory"`
+	Key     string `json:"key"`
+	Host    string `json:"host"`
+	SshUser string `json:"ssh_user"`
+}
+
+
+func CreateMachine(res http.ResponseWriter, req *http.Request) {
+	var params MachineParams
+	if err := json.NewDecoder(req.Body).Decode(&params); err != nil {
 		http.Error(res, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	if MachineParams.Name == "" || MachineParams.Ram == 0 || MachineParams.Cpu == 0 || MachineParams.Memory == 0 || MachineParams.Key == "" || MachineParams.Host == "" || MachineParams.SshUser == "" {
+	if params.Name == "" || params.Ram == 0 || params.Cpu == 0 || params.Memory == 0 || params.Key == "" || params.Host == "" || params.SshUser == "" {
 		http.Error(res, "Name, ram, cpu, memory, key, host, and ssh_user are required", http.StatusBadRequest)
 		return
 	}
@@ -51,18 +54,18 @@ func CreateMachine(res http.ResponseWriter, req *http.Request) {
 	}
 	ownerID := int32(num)
 
-	err = triedToConnectForFirstTime(MachineParams.Host, MachineParams.SshUser, MachineParams.Key)
+	err = triedToConnectForFirstTime(params.Host, params.SshUser, params.Key)
 	if err != nil {
 		http.Error(res, "Failed to connect to machine", http.StatusInternalServerError)
 		return
 	}
 
 	createParams := db.CreateMachineParams{
-		Name:    MachineParams.Name,
-		Ram:     MachineParams.Ram,
-		Cpu:     MachineParams.Cpu,
-		Memory:  MachineParams.Memory,
-		Key:     sql.NullString{String: MachineParams.Key, Valid: true},
+		Name:    params.Name,
+		Ram:     params.Ram,
+		Cpu:     params.Cpu,
+		Memory:  params.Memory,
+		Key:     sql.NullString{String: params.Key, Valid: true},
 		OwnerID: ownerID,
 	}
 

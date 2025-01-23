@@ -1,6 +1,7 @@
 import React, { useState, FormEvent } from 'react';
 import axios from 'axios';
 import './LoginForm.css';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginFormData {
   email: string;
@@ -21,15 +22,17 @@ const LoginForm = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
 
+  const navigate = useNavigate();
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
@@ -42,7 +45,7 @@ const LoginForm = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -59,8 +62,7 @@ const LoginForm = () => {
         withCredentials: true,
       })
       console.log('User:', user.data);
-      // Handle successful signup (e.g., redirect or show success message)
-      
+      navigate('/feed')
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setErrors({
@@ -95,7 +97,7 @@ const LoginForm = () => {
     <div className="login-container">
       <form onSubmit={handleSubmit} className="login-form">
         <h2 className="form-title">Create Account</h2>
-        
+
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
@@ -124,8 +126,8 @@ const LoginForm = () => {
 
         {errors.server && <div className="form-error">{errors.server}</div>}
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           className="submit-button"
           disabled={isLoading}
         >

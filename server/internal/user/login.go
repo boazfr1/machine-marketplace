@@ -11,6 +11,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type userParams struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 func verifyPassword(storedPassword []byte, passwordString string) error {
 	if strings.HasPrefix(passwordString, `\x`) {
 		passwordString = passwordString[2:]
@@ -24,12 +30,7 @@ func verifyPassword(storedPassword []byte, passwordString string) error {
 }
 
 func Login(res http.ResponseWriter, req *http.Request) {
-	var params struct {
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
-
+	var params userParams
 	if err := json.NewDecoder(req.Body).Decode(&params); err != nil {
 		http.Error(res, "Invalid request body", http.StatusBadRequest)
 		return
