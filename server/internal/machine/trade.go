@@ -3,6 +3,7 @@ package machine
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	db "machine-marketplace/internal/DB/generated"
 	user "machine-marketplace/internal/user"
 	database "machine-marketplace/pkg/database"
@@ -10,7 +11,6 @@ import (
 
 	"net/http"
 )
-
 
 type MachineParams struct {
 	Name    string `json:"name"`
@@ -21,7 +21,6 @@ type MachineParams struct {
 	Host    string `json:"host"`
 	SshUser string `json:"ssh_user"`
 }
-
 
 func CreateMachine(res http.ResponseWriter, req *http.Request) {
 	var params MachineParams
@@ -106,6 +105,39 @@ func GetMachineByID(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	json.NewEncoder(res).Encode(machine)
+}
+
+func GetMyMachines(res http.ResponseWriter, req *http.Request) {
+	cookie, err := req.Cookie("jwt")
+	if err != nil {
+		http.Error(res, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	claims, err := user.ValidateToken(cookie.Value)
+	if err != nil {
+		http.Error(res, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	num, err := strconv.Atoi(claims.Issuer)
+	if err != nil {
+		http.Error(res, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	ownerID := sql.NullInt32{
+		Int32: int32(num),
+		Valid: true,
+	}
+
+	machines, err := database.Queries.ListMachinesByBuyerID(req.Context(), ownerID)
+	if err != nil {
+		http.Error(res, "Failed to get machines list", http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(machines)
+	json.NewEncoder(res).Encode(machines)
 }
 
 func BuyMachine(res http.ResponseWriter, req *http.Request) {

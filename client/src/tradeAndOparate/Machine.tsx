@@ -1,5 +1,7 @@
-import { FC } from "react";
+import { FC, useState } from "react";
+import { Dialog } from "@mui/material";
 import "./Machine.css"
+import Terminal from "./Terminal";
 
 
 interface MachineProps {
@@ -9,19 +11,26 @@ interface MachineProps {
   Storage: number;
 }
 
-const Machine: FC<MachineProps> = ({Name, RAM, CPU, Storage }) => {
+const Machine: FC<MachineProps> = ({ Name, RAM, CPU, Storage }) => {
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+
 
   const ConnectToTerminal = () => {
-    console.log("ConnectToTerminal")
+    setIsTerminalOpen(true);
   }
-  
+
+  const handleClose = () => {
+    setIsTerminalOpen(false);
+  };
+
+
 
   return (
     <div className="machine-card">
       <div className="machine-header">
         <h2>{Name}</h2>
       </div>
-      
+
       <div className="machine-content">
         <div className="specs-grid">
           <div className="spec-item">
@@ -47,23 +56,32 @@ const Machine: FC<MachineProps> = ({Name, RAM, CPU, Storage }) => {
         </div>
 
         <div className="button-container">
-          <button 
+          <button
             className="connect-button"
             onClick={ConnectToTerminal}
           >
             Connect to Terminal
           </button>
-          
-          <button 
-            className="action-button"
-            onClick={() => {}}
-          >
-            More Actions
-          </button>
         </div>
       </div>
 
-      
+      <Dialog
+        open={isTerminalOpen}
+        onClose={handleClose}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          style: {
+            backgroundColor: '#1E1E1E',
+            color: '#fff',
+            borderRadius: '8px'
+          }
+        }}
+      >
+        <Terminal onClose={handleClose} machineName={Name} />
+      </Dialog>
+
+
     </div>
   );
 };

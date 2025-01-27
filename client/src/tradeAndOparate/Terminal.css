@@ -1,0 +1,54 @@
+.terminal-container {
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .terminal-header {
+    background-color: #333;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  
+  .terminal-content {
+    flex: 1;
+    padding: 16px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-y: auto;
+  }
+  
+  .command-line {
+    margin-bottom: 8px;
+  }
+  
+  .command-output {
+    margin-bottom: 16px;
+    color: #A0A0A0;
+    white-space: pre-wrap;
+  }
+  
+  .current-line {
+    display: flex;
+    align-items: center;
+  }
+  
+  .prompt {
+    color: #4CAF50;
+    margin-right: 8px;
+  }
+  
+  .current-line input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 14px;
+    outline: none;
+  }

@@ -11,7 +11,6 @@ import (
 
 func RouteList(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/health", middleware.Get(health))
-	mux.HandleFunc("/api/v1/boaz", middleware.Get(boaz))
 	mux.HandleFunc("/api/v1/sign-up", middleware.Post(user.SignUp))
 	mux.HandleFunc("/api/v1/login", middleware.Post(user.Login))
 	mux.HandleFunc("/api/v1/logout", middleware.Post(user.Logout))
@@ -19,6 +18,8 @@ func RouteList(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/machine", middleware.Get(machine.ListOfFreeMachines))
 	mux.HandleFunc("/api/v1/machine/create", middleware.Post(machine.CreateMachine))
 	mux.HandleFunc("/api/v1/machine/connect", middleware.Post(machine.WebSocketHandler))
+	mux.HandleFunc("/api/v1/machine/my-machines", middleware.Get(machine.GetMyMachines))
+
 }
 
 func health(res http.ResponseWriter, req *http.Request) {
@@ -34,9 +35,5 @@ func health(res http.ResponseWriter, req *http.Request) {
 
 	res.Header().Set("Content-Type", "application/json")
 	res.Write(js)
-
-}
-
-func boaz(res http.ResponseWriter, req *http.Request) {
 
 }

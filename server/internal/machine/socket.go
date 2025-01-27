@@ -38,6 +38,11 @@ var Upgrader = websocket.Upgrader{
 	},
 }
 
+type returnedMassage struct {
+	Massage  string `json:"massage"`
+	Location string `json:"Location"`
+}
+
 func WebSocketHandler(res http.ResponseWriter, req *http.Request) {
 	var params chosenMachineParams
 	if err := json.NewDecoder(req.Body).Decode(&params); err != nil {
@@ -98,7 +103,24 @@ func handleConnection(host string, conn *Connection) {
 			continue
 		}
 
-		if err := conn.ws.WriteMessage(websocket.TextMessage, []byte(output)); err != nil {
+		pwd, err := ExecuteCommand(conn, string("pwd"))
+		if err != nil {
+			conn.ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("Error: %v", err)))
+			continue
+		}
+
+		massage := returnedMassage{
+			Massage:  output,
+			Location: pwd,
+		}
+
+		jsonData, err := json.Marshal(massage)
+		if err != nil {
+			fmt.Printf("Error marshaling to JSON: %v\n", err)
+			return
+		}
+
+		if err := conn.ws.WriteMessage(websocket.TextMessage, jsonData); err != nil {
 			fmt.Printf("Error writing response: %v\n", err)
 			return
 		}
