@@ -7,9 +7,6 @@ import './Terminal.css';
 interface TerminalProps {
     onClose: () => void;
     machineName: string;
-    sshKey: string;
-    host: string;
-    sshUser: string;
 }
 
 interface CommandEntry {
@@ -17,7 +14,12 @@ interface CommandEntry {
     output: string;
 }
 
-const Terminal: FC<TerminalProps> = ({ onClose, machineName, sshKey, host, sshUser }) => {
+interface socketResponse {
+    response: string;
+    location: string;
+}
+
+const Terminal: FC<TerminalProps> = ({ onClose, machineName}) => {
     const [commandHistory, setCommandHistory] = useState<CommandEntry[]>([]);
     const [currentCommand, setCurrentCommand] = useState('');
     const [pwd, setPwd] = useState('')
@@ -44,74 +46,38 @@ const Terminal: FC<TerminalProps> = ({ onClose, machineName, sshKey, host, sshUs
     };
 
     const connectWebSocket = async () => {
-        try {
-            const response = await fetch('/api/v1/machine/connect', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    key: sshKey,
-                    host: host,
-                    ssh_user: sshUser
-                })
-            });
 
-            if (response.ok) {
-                const ws = new WebSocket(`ws://${window.location.host}/api/v1/machine/connect`);
-                
-                ws.onmessage = (event) => {
-                    try {
-                        const response = JSON.parse(event.data);
-                        setCommandHistory(prev => [...prev, {
-                            command: currentCommand,
-                            output: response.massage
-                        }]);
-                        setPwd(response.Location);
-                    } catch (error) {
-                        console.error('Error parsing response:', error);
-                    }
-                };
+        const params = {
+            machineName
+        };
+        const queryParams = new URLSearchParams(params).toString();
 
-                ws.onopen = () => {
-                    console.log('WebSocket connected');
-                };
+        const websocket = new WebSocket(`ws://localhost:8080/api/v1/machine/connect?${queryParams}`);
+        
 
-                ws.onerror = (error) => {
-                    console.error('WebSocket error:', error);
-                };
+        websocket.onopen = () => {
+            console.log('Connected to WebSocket');
+            websocket.send(JSON.stringify(params));
+        };
 
-                setSocketCon(ws);
-            }
-        } catch (error) {
-            console.error('Connection error:', error);
-        }
+        websocket.onmessage = (event) => {
+            const data: socketResponse = JSON.parse(event.data);
+            setPwd(data.location);
+            setCommandHistory([...commandHistory, { command: currentCommand, output: data.response }]);
+            setCurrentCommand('');
+        };
+
+        websocket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        setSocketCon(websocket);
     };
 
-    // const processCommand = (command: string): string => {
-    //     // Add your command processing logic here
-    //     switch (command.toLowerCase()) {
-    //         case 'help':
-    //             return 'Available commands:\nhelp - Show this help message\nclear - Clear terminal\necho [text] - Echo text back\nexit - Close terminal';
-    //         case 'clear':
-    //             setCommandHistory([]);
-    //             return '';
-    //         case 'exit':
-    //             onClose();
-    //             return '';
-    //         default:
-    //             if (command.toLowerCase().startsWith('echo ')) {
-    //                 return command.slice(5);
-    //             }
-    //             return `Command not found: ${command}`;
-    //     }
-    // };
-
+    
     const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && currentCommand) {
-            const output = sendCommand();
-            setCommandHistory([...commandHistory, { command: currentCommand, output }]);
-            setCurrentCommand('');
+            sendCommand();
         }
     };
 

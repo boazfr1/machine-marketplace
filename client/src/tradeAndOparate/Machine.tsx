@@ -78,7 +78,10 @@ const Machine: FC<MachineProps> = ({ Name, RAM, CPU, Storage }) => {
           }
         }}
       >
-        <Terminal onClose={handleClose} machineName={Name} />
+        <Terminal
+          onClose={handleClose}
+          machineName={Name}
+        />
       </Dialog>
 
 

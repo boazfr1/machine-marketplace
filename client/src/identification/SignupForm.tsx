@@ -67,7 +67,6 @@ const SignupForm = () => {
     setIsLoading(true);
     setErrors({});
 
-    // Create the payload without confirmPassword
     const signupData = {
       Name: formData.Name,
       email: formData.email,
@@ -75,10 +74,7 @@ const SignupForm = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:3001/api/v1/sign-up', signupData);
-      console.log('Sign up successful:', response.data);
-      // Handle successful signup (e.g., redirect or show success message)
-      
+      await axios.post('http://localhost:3001/api/v1/sign-up', signupData);      
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setErrors({
@@ -100,7 +96,6 @@ const SignupForm = () => {
       ...prev,
       [name]: value
     }));
-    // Clear field-specific error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
         ...prev,

@@ -54,14 +54,12 @@ const LoginForm = () => {
     setErrors({});
 
     try {
-      const response = await axios.post('http://localhost:3001/api/v1/login', formData, {
+      await axios.post('http://localhost:3001/api/v1/login', formData, {
         withCredentials: true,
       });
-      console.log('Sign up successful:', response.data);
-      const user = await axios.get('http://localhost:3001/api/v1/user', {
-        withCredentials: true,
-      })
-      console.log('User:', user.data);
+      // const user = await axios.get('http://localhost:3001/api/v1/user', {
+      //   withCredentials: true,
+      // })
       navigate('/feed')
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -84,7 +82,6 @@ const LoginForm = () => {
       ...prev,
       [name]: value
     }));
-    // Clear field-specific error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors(prev => ({
         ...prev,

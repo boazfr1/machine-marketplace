@@ -13,7 +13,6 @@ import (
 type Connection struct {
 	ws        *websocket.Conn
 	sshClient *ssh.Client
-	// sshSession *ssh.Session
 	mutex sync.Mutex
 }
 
@@ -30,6 +29,11 @@ type chosenMachineParams struct {
 	Key     string `json:"key"`
 	Host    string `json:"host"`
 	SshUser string `json:"ssh_user"`
+	Type    string `json:"type"`
+}
+
+type machineName struct {
+	MachineName string `json:"machine_name"`
 }
 
 var Upgrader = websocket.Upgrader{
@@ -44,16 +48,11 @@ type returnedMassage struct {
 }
 
 func WebSocketHandler(res http.ResponseWriter, req *http.Request) {
-	var params chosenMachineParams
-	if err := json.NewDecoder(req.Body).Decode(&params); err != nil {
-		http.Error(res, "Invalid request body", http.StatusBadRequest)
-		return
-	}
 
-	if params.Key == "" || params.Host == "" || params.SshUser == "" {
-		http.Error(res, "key, host, and ssh_user are required", http.StatusBadRequest)
-		return
-	}
+	query := req.URL.Query()
+    name := machineName{
+		MachineName: query.Get("machine_name"),
+    }
 
 	wsConn, err := Upgrader.Upgrade(res, req, nil)
 	if err != nil {
@@ -61,6 +60,8 @@ func WebSocketHandler(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	
+	
 	sshClient, err := CreateSSHClient(params.Host, params.SshUser, params.Key)
 	if err != nil {
 		wsConn.Close()
@@ -125,21 +126,4 @@ func handleConnection(host string, conn *Connection) {
 			return
 		}
 	}
-
 }
-
-// func handleConnection(wsConn *websocket.Conn, key string, user string, host string) {
-// 	for {
-// 		_, massage, err := wsConn.ReadMessage()
-// 		if err != nil {
-// 			fmt.Println("Error reading message:", err)
-// 			break
-// 		}
-
-// 		if err := wsConn.WriteMessage(websocket.TextMessage, massage); err != nil {
-// 			fmt.Println("Error writing message:", err)
-// 			break
-// 		}
-
-// 	}
-// }
