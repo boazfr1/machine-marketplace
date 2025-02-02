@@ -1,7 +1,7 @@
 import React, { useState, FormEvent } from 'react';
-import axios from 'axios';
 import './LoginForm.css';
 import { useNavigate } from 'react-router-dom';
+import api, { isAxiosError } from '../api';
 
 interface LoginFormData {
   email: string;
@@ -54,15 +54,10 @@ const LoginForm = () => {
     setErrors({});
 
     try {
-      await axios.post('http://localhost:3001/api/v1/login', formData, {
-        withCredentials: true,
-      });
-      // const user = await axios.get('http://localhost:3001/api/v1/user', {
-      //   withCredentials: true,
-      // })
-      navigate('/feed')
+      await api.post('/api/v1/login', formData);
+      navigate('/feed');
     } catch (error) {
-      if (axios.isAxiosError(error)) {
+      if (isAxiosError(error)) {
         setErrors({
           server: error.response?.data?.message || 'An error occurred during sign up'
         });

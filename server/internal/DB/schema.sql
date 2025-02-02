@@ -1,17 +1,9 @@
 -- schema.sql
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password BYTEA NOT NULL
-);
-
-CREATE TABLE credit_cards (
-    id SERIAL PRIMARY KEY,
-    owner_id INTEGER NOT NULL REFERENCES users(id),
-    number INTEGER NOT NULL,
-    expiration_date TEXT NOT NULL,
-    secret INTEGER NOT NULL
 );
 
 CREATE TABLE machines (

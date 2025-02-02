@@ -1,9 +1,9 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import Machine from "./Machine";
 import "./Feed.css";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../dashboard/SideBar";
+import api from "../api";
 
 
 type MachineType = {
@@ -23,7 +23,7 @@ const Feed = () => {
 
     const getAllAvailableMachine = async () => {
         try {
-            const { data } = await axios<MachineType[]>('http://localhost:3001/api/v1/machine');
+            const { data } = await api<MachineType[]>('/api/v1/machine');
             setAvailableMachine(data);
         } finally {
             setIsLoading(false);

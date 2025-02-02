@@ -6,14 +6,14 @@ import Terminal from "./Terminal";
 
 interface MachineProps {
   Name: string;
+  Owner: string;
   RAM: number;
   CPU: number;
   Storage: number;
 }
 
-const Machine: FC<MachineProps> = ({ Name, RAM, CPU, Storage }) => {
+const Machine: FC<MachineProps> = ({ Name, Owner, RAM, CPU, Storage }) => {
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
-
 
   const ConnectToTerminal = () => {
     setIsTerminalOpen(true);
@@ -29,6 +29,7 @@ const Machine: FC<MachineProps> = ({ Name, RAM, CPU, Storage }) => {
     <div className="machine-card">
       <div className="machine-header">
         <h2>{Name}</h2>
+        <p>{Owner}</p>
       </div>
 
       <div className="machine-content">
@@ -81,6 +82,7 @@ const Machine: FC<MachineProps> = ({ Name, RAM, CPU, Storage }) => {
         <Terminal
           onClose={handleClose}
           machineName={Name}
+          ownerName={Owner}
         />
       </Dialog>
 

@@ -10,14 +10,6 @@ SELECT * FROM users WHERE id = $1;
 -- name: GetUserByEmail :one
 SELECT * FROM users WHERE email = $1;
 
--- name: CreateCreditCard :one
-INSERT INTO credit_cards (owner_id, number, expiration_date, secret)
-VALUES ($1, $2, $3, $4)
-RETURNING *;
-
--- name: GetCreditCardsByOwnerID :many
-SELECT * FROM credit_cards WHERE owner_id = $1;
-
 -- name: CreateMachine :one
 INSERT INTO machines (
     name,
@@ -59,5 +51,8 @@ SET buyer_id = $1, key = $2
 WHERE id = $3 AND buyer_id IS NULL
 RETURNING *;
 
--- name: GetUserCreditCards :many
-SELECT * FROM credit_cards WHERE owner_id = $1;
+-- name: GetMachineByNameAndOwner :one
+SELECT m.* 
+FROM machines m
+JOIN users u ON m.owner_id = u.id
+WHERE m.name = $1 AND u.name = $2;

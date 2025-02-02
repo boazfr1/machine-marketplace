@@ -7,6 +7,7 @@ import './Terminal.css';
 interface TerminalProps {
     onClose: () => void;
     machineName: string;
+    ownerName: string;
 }
 
 interface CommandEntry {
@@ -19,7 +20,7 @@ interface socketResponse {
     location: string;
 }
 
-const Terminal: FC<TerminalProps> = ({ onClose, machineName}) => {
+const Terminal: FC<TerminalProps> = ({ onClose, machineName, ownerName}) => {
     const [commandHistory, setCommandHistory] = useState<CommandEntry[]>([]);
     const [currentCommand, setCurrentCommand] = useState('');
     const [pwd, setPwd] = useState('')
@@ -48,7 +49,8 @@ const Terminal: FC<TerminalProps> = ({ onClose, machineName}) => {
     const connectWebSocket = async () => {
 
         const params = {
-            machineName
+            machineName,
+            ownerName
         };
         const queryParams = new URLSearchParams(params).toString();
 

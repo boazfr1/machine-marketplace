@@ -1,6 +1,6 @@
 import React, { useState, FormEvent } from 'react';
-import axios from 'axios';
 import './SignupForm.css';
+import api, { isAxiosError } from '../api';
 
 interface SignupFormData {
   Name: string;
@@ -74,9 +74,9 @@ const SignupForm = () => {
     };
 
     try {
-      await axios.post('http://localhost:3001/api/v1/sign-up', signupData);      
+      await api.post('/api/v1/sign-up', signupData);      
     } catch (error) {
-      if (axios.isAxiosError(error)) {
+      if (isAxiosError(error)) {
         setErrors({
           server: error.response?.data?.message || 'An error occurred during sign up'
         });

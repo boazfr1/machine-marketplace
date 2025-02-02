@@ -1,11 +1,16 @@
 package machine
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"sync"
+	json "encoding/json"
+	fmt "fmt"
+	db "machine-marketplace/internal/DB/generated"
+	middleware "machine-marketplace/internal/middleware"
+	database "machine-marketplace/pkg/database"
+	http "net/http"
+	"strconv"
+	sync "sync"
 
+	jwt "github.com/dgrijalva/jwt-go/v4"
 	websocket "github.com/gorilla/websocket"
 	ssh "golang.org/x/crypto/ssh"
 )
@@ -13,7 +18,7 @@ import (
 type Connection struct {
 	ws        *websocket.Conn
 	sshClient *ssh.Client
-	mutex sync.Mutex
+	mutex     sync.Mutex
 }
 
 type ConnectionManager struct {
@@ -34,6 +39,7 @@ type chosenMachineParams struct {
 
 type machineName struct {
 	MachineName string `json:"machine_name"`
+	OwnerName   string `json:"owner_name"`
 }
 
 var Upgrader = websocket.Upgrader{
@@ -49,10 +55,32 @@ type returnedMassage struct {
 
 func WebSocketHandler(res http.ResponseWriter, req *http.Request) {
 
+	claims := req.Context().Value(middleware.ClaimsContextKey).(*jwt.StandardClaims)
+
 	query := req.URL.Query()
-    name := machineName{
-		MachineName: query.Get("machine_name"),
-    }
+
+	createParams := db.GetMachineByNameAndOwnerParams{
+		Name:   query.Get("machine_name"),
+		Name_2: query.Get("owner_name"),
+	}
+
+	params, err := database.Queries.GetMachineByNameAndOwner(req.Context(), createParams)
+	if err != nil {
+		http.Error(res, "Machine not found", http.StatusNotFound)
+		return
+	}
+
+	num, err := strconv.Atoi(claims.Issuer)
+	if err != nil {
+		http.Error(res, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+	buyerID := int32(num)
+
+	if params.BuyerID.Int32 != buyerID {
+		http.Error(res, "You are not the owner of this machine", http.StatusForbidden)
+		return
+	}
 
 	wsConn, err := Upgrader.Upgrade(res, req, nil)
 	if err != nil {
@@ -60,9 +88,7 @@ func WebSocketHandler(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	
-	
-	sshClient, err := CreateSSHClient(params.Host, params.SshUser, params.Key)
+	sshClient, err := CreateSSHClient(params.Host, params.SshUser, params.Key.String)
 	if err != nil {
 		wsConn.Close()
 		fmt.Printf("Error creating SSH client: %v\n", err)

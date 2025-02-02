@@ -3,6 +3,7 @@ package user
 import (
 	"encoding/json"
 	db "machine-marketplace/internal/DB/generated"
+	data "machine-marketplace/internal/data"
 	"machine-marketplace/pkg/database"
 	"net/http"
 	"strings"
@@ -11,8 +12,8 @@ import (
 )
 
 func SignUp(res http.ResponseWriter, req *http.Request) {
-	var params userParams
-	
+	var params data.UserParams
+
 	if err := json.NewDecoder(req.Body).Decode(&params); err != nil {
 		http.Error(res, "Invalid request body", http.StatusBadRequest)
 		return

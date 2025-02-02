@@ -5,11 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	db "machine-marketplace/internal/DB/generated"
-	user "machine-marketplace/internal/user"
+	middleware "machine-marketplace/internal/middleware"
 	database "machine-marketplace/pkg/database"
 	"strconv"
 
 	"net/http"
+
+	"github.com/dgrijalva/jwt-go/v4"
 )
 
 type MachineParams struct {
@@ -23,6 +25,9 @@ type MachineParams struct {
 }
 
 func CreateMachine(res http.ResponseWriter, req *http.Request) {
+
+	claims := req.Context().Value(middleware.ClaimsContextKey).(*jwt.StandardClaims)
+
 	var params MachineParams
 	if err := json.NewDecoder(req.Body).Decode(&params); err != nil {
 		http.Error(res, "Invalid request body", http.StatusBadRequest)
@@ -31,18 +36,6 @@ func CreateMachine(res http.ResponseWriter, req *http.Request) {
 
 	if params.Name == "" || params.Ram == 0 || params.Cpu == 0 || params.Memory == 0 || params.Key == "" || params.Host == "" || params.SshUser == "" {
 		http.Error(res, "Name, ram, cpu, memory, key, host, and ssh_user are required", http.StatusBadRequest)
-		return
-	}
-
-	cookie, err := req.Cookie("jwt")
-	if err != nil {
-		http.Error(res, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
-	claims, err := user.ValidateToken(cookie.Value)
-	if err != nil {
-		http.Error(res, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
 
@@ -108,17 +101,7 @@ func GetMachineByID(res http.ResponseWriter, req *http.Request) {
 }
 
 func GetMyMachines(res http.ResponseWriter, req *http.Request) {
-	cookie, err := req.Cookie("jwt")
-	if err != nil {
-		http.Error(res, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-
-	claims, err := user.ValidateToken(cookie.Value)
-	if err != nil {
-		http.Error(res, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
+	claims := req.Context().Value(middleware.ClaimsContextKey).(*jwt.StandardClaims)
 
 	num, err := strconv.Atoi(claims.Issuer)
 	if err != nil {

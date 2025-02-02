@@ -14,12 +14,12 @@ func RouteList(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/sign-up", middleware.Post(user.SignUp))
 	mux.HandleFunc("/api/v1/login", middleware.Post(user.Login))
 	mux.HandleFunc("/api/v1/logout", middleware.Post(user.Logout))
-	mux.HandleFunc("/api/v1/user", middleware.Get(user.User))
-	mux.HandleFunc("/api/v1/machine", middleware.Get(machine.ListOfFreeMachines))
-	mux.HandleFunc("/api/v1/machine/create", middleware.Post(machine.CreateMachine))
-	mux.HandleFunc("/api/v1/machine/connect", middleware.Post(machine.WebSocketHandler))
-	mux.HandleFunc("/api/v1/machine/my-machines", middleware.Get(machine.GetMyMachines))
 
+	mux.HandleFunc("/api/v1/user", middleware.GetWithAuth(user.User))
+	mux.HandleFunc("/api/v1/machine", middleware.GetWithAuth(machine.ListOfFreeMachines))
+	mux.HandleFunc("/api/v1/machine/create", middleware.PostWithAuth(machine.CreateMachine))
+	mux.HandleFunc("/api/v1/machine/connect", middleware.PostWithAuth(machine.WebSocketHandler))
+	mux.HandleFunc("/api/v1/machine/my-machines", middleware.GetWithAuth(machine.GetMyMachines))
 }
 
 func health(res http.ResponseWriter, req *http.Request) {

@@ -19,6 +19,10 @@ func main() {
 	}
 	defer database.Close()
 
+	if err := database.SetupDatabase(); err != nil {
+		log.Fatal("Failed to setup database:", err)
+	}
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", entryPoint)
 	routes.RouteList(mux)
