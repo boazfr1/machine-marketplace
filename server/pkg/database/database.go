@@ -15,7 +15,16 @@ var (
 
 func Init() error {
 	var err error
-	DB, err = sql.Open("postgres", "postgresql://postgres:postgres@localhost:5432/machine_market?sslmode=disable")
+	dbHost := "postgres" // Use the service name from docker-compose
+	dbPort := "5432"
+	dbUser := "postgres"
+	dbPassword := "postgres"
+	dbName := "machine_market"
+
+	connectionString := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable",
+		dbUser, dbPassword, dbHost, dbPort, dbName)
+
+	DB, err = sql.Open("postgres", connectionString)
 	if err != nil {
 		return err
 	}
@@ -29,6 +38,23 @@ func Init() error {
 	Queries = db.New(DB)
 	return nil
 }
+
+// func Init() error {
+// 	var err error
+// 	DB, err = sql.Open("postgres", "postgresql://postgres:postgres@localhost:5432/machine_market?sslmode=disable")
+// 	if err != nil {
+// 		return err
+// 	}
+
+// 	if err := DB.Ping(); err != nil {
+// 		return err
+// 	}
+
+// 	fmt.Println("database connect successfully")
+
+// 	Queries = db.New(DB)
+// 	return nil
+// }
 
 func Close() {
 	if DB != nil {

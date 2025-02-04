@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import './style/MachineDetails.css'
+import '../style/MachineDetails.css'
 import { MachineType } from '../../global/types';
 
 const MachineDetails = () => {

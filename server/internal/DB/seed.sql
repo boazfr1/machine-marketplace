@@ -11,19 +11,6 @@ INSERT INTO users (name, email, password) VALUES
 ('Iris West', 'iris@test.com', sha256('password9')),
 ('Jack White', 'jack@test.com', sha256('password10'));
 
--- Then insert credit cards
-INSERT INTO credit_cards (owner_id, number, expiration_date, secret) VALUES
-(1, 1234567890, '12/25', 123),
-(1, 1234567891, '01/26', 456),
-(2, 1234567892, '03/26', 789),
-(2, 1234567893, '04/26', 234),
-(3, 1234567894, '05/26', 567),
-(3, 1234567895, '06/26', 890),
-(4, 1234567896, '07/26', 345),
-(4, 1234567897, '08/26', 678),
-(5, 1234567898, '09/26', 901),
-(5, 1234567899, '10/26', 432);
-
 -- Finally insert machines
 INSERT INTO machines (name, buyer_id, owner_id, ram, cpu, memory, key, host, ssh_user) VALUES
 ('Server-1', 1, 2, 16384, 4, 512, 'ssh-rsa AAAA...', '192.168.1.100', 'admin'),

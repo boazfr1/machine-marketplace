@@ -10,7 +10,7 @@ import {
   CircularProgress
 } from '@mui/material';
 import api from '../../global/api';
-import './style/AddMachine.css';
+import '../style/AddMachine.css';
 import Sidebar from '../../dashboard/SideBar';
 
 interface MachineFormData {

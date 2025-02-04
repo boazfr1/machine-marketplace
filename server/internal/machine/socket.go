@@ -55,7 +55,6 @@ type returnedMassage struct {
 }
 
 func WebSocketHandler(res http.ResponseWriter, req *http.Request) {
-	fmt.Println("---WebSocketHandler----")
 
 	claims := req.Context().Value(middleware.ClaimsContextKey).(*jwt.StandardClaims)
 

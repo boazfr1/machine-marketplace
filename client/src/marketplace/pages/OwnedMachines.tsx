@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Machine from "../components/Machine";
-import "./style/Feed.css";
+import "../style/Feed.css";
 import Sidebar from "../../dashboard/SideBar";
 import api from "../../global/api";
 import { useNavigate } from "react-router-dom";
