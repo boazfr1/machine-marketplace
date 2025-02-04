@@ -30,22 +30,23 @@ var Manager = &ConnectionManager{
 	connections: make(map[string]*Connection),
 }
 
-type chosenMachineParams struct {
-	Key     string `json:"key"`
-	Host    string `json:"host"`
-	SshUser string `json:"ssh_user"`
-	Type    string `json:"type"`
-}
+// type chosenMachineParams struct {
+// 	Key     string `json:"key"`
+// 	Host    string `json:"host"`
+// 	SshUser string `json:"ssh_user"`
+// 	Type    string `json:"type"`
+// }
 
-type machineName struct {
-	MachineName string `json:"machine_name"`
-	OwnerName   string `json:"owner_name"`
-}
+// type machineName struct {
+// 	MachineName string `json:"machine_name"`
+// 	OwnerName   string `json:"owner_name"`
+// }
 
 var Upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
+	EnableCompression: true,
 }
 
 type returnedMassage struct {
@@ -54,24 +55,33 @@ type returnedMassage struct {
 }
 
 func WebSocketHandler(res http.ResponseWriter, req *http.Request) {
+	fmt.Println("---WebSocketHandler----")
 
 	claims := req.Context().Value(middleware.ClaimsContextKey).(*jwt.StandardClaims)
 
 	query := req.URL.Query()
 
+	ownerID, err := strconv.Atoi(query.Get("owner_name"))
+	if err != nil {
+		http.Error(res, "Invalid owner ID", http.StatusBadRequest)
+		return
+	}
+
 	createParams := db.GetMachineByNameAndOwnerParams{
-		Name:   query.Get("machine_name"),
-		Name_2: query.Get("owner_name"),
+		Name:    query.Get("machine_name"),
+		OwnerID: int32(ownerID),
 	}
 
 	params, err := database.Queries.GetMachineByNameAndOwner(req.Context(), createParams)
 	if err != nil {
+		fmt.Println("err = ", err)
 		http.Error(res, "Machine not found", http.StatusNotFound)
 		return
 	}
 
 	num, err := strconv.Atoi(claims.Issuer)
 	if err != nil {
+		fmt.Println("err = ", err)
 		http.Error(res, "Unauthorized", http.StatusUnauthorized)
 		return
 	}

@@ -120,19 +120,17 @@ func (q *Queries) GetMachineByID(ctx context.Context, id int32) (Machine, error)
 }
 
 const getMachineByNameAndOwner = `-- name: GetMachineByNameAndOwner :one
-SELECT m.id, m.name, m.buyer_id, m.owner_id, m.ram, m.cpu, m.memory, m.key, m.host, m.ssh_user 
-FROM machines m
-JOIN users u ON m.owner_id = u.id
-WHERE m.name = $1 AND u.name = $2
+SELECT id, name, buyer_id, owner_id, ram, cpu, memory, key, host, ssh_user FROM machines 
+WHERE name = $1 AND owner_id = $2
 `
 
 type GetMachineByNameAndOwnerParams struct {
-	Name   string
-	Name_2 string
+	Name    string
+	OwnerID int32
 }
 
 func (q *Queries) GetMachineByNameAndOwner(ctx context.Context, arg GetMachineByNameAndOwnerParams) (Machine, error) {
-	row := q.db.QueryRowContext(ctx, getMachineByNameAndOwner, arg.Name, arg.Name_2)
+	row := q.db.QueryRowContext(ctx, getMachineByNameAndOwner, arg.Name, arg.OwnerID)
 	var i Machine
 	err := row.Scan(
 		&i.ID,
@@ -220,14 +218,15 @@ func (q *Queries) ListAvailableMachines(ctx context.Context) ([]Machine, error) 
 }
 
 const listMachinesByBuyerID = `-- name: ListMachinesByBuyerID :many
-SELECT ram, cpu, memory, name FROM machines WHERE buyer_id = $1
+SELECT ram, cpu, memory, name, owner_id FROM machines WHERE buyer_id = $1
 `
 
 type ListMachinesByBuyerIDRow struct {
-	Ram    int32
-	Cpu    int32
-	Memory int32
-	Name   string
+	Ram     int32
+	Cpu     int32
+	Memory  int32
+	Name    string
+	OwnerID int32
 }
 
 func (q *Queries) ListMachinesByBuyerID(ctx context.Context, buyerID sql.NullInt32) ([]ListMachinesByBuyerIDRow, error) {
@@ -244,6 +243,7 @@ func (q *Queries) ListMachinesByBuyerID(ctx context.Context, buyerID sql.NullInt
 			&i.Cpu,
 			&i.Memory,
 			&i.Name,
+			&i.OwnerID,
 		); err != nil {
 			return nil, err
 		}

@@ -1,12 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import './MachinePage.css'
+import { MachineType } from '../global/types';
 
-type MachineType = {
-    Name: string;
-    RAM: number;
-    CPU: number;
-    Storage: number;
-};
 
 const MachinePage = () => {
     const location = useLocation();
@@ -18,33 +13,38 @@ const MachinePage = () => {
         return null;
     }
 
+    const buyMachine = () => {
+        console.log("Buy Machine");
+    }
+
     return (
         <div className="machine-details-container">
             <h1>{machine.Name}</h1>
             <div className="machine-specs">
                 <div className="spec-item">
                     <label>RAM:</label>
-                    <span>{machine.RAM} GB</span>
+                    <span>{machine.Ram} GB</span>
                 </div>
                 <div className="spec-item">
                     <label>CPU Cores:</label>
-                    <span>{machine.CPU}</span>
+                    <span>{machine.Cpu}</span>
                 </div>
                 <div className="spec-item">
                     <label>Storage:</label>
-                    <span>{machine.Storage} GB</span>
+                    <span>{machine.Memory} GB</span>
+                </div>
+                <div className="spec-item">
+                    <label>Owner:</label>
+                    <span>{machine.OwnerID}</span>
                 </div>
             </div>
             
-            <div className="actions">
-                <button onClick={() => {/* Add your action here */}}>
-                    Connect to Terminal
-                </button>
-                <button onClick={() => {/* Add your action here */}}>
-                    View Logs
-                </button>
-                <button onClick={() => navigate('/')}>
-                    Back to Feed
+            <div className="button-container">
+                <button
+                    className="connect-button"
+                    onClick={buyMachine}
+                >
+                    Buy
                 </button>
             </div>
         </div>

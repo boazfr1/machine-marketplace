@@ -18,8 +18,9 @@ func RouteList(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/user", middleware.GetWithAuth(user.User))
 	mux.HandleFunc("/api/v1/machine", middleware.GetWithAuth(machine.ListOfFreeMachines))
 	mux.HandleFunc("/api/v1/machine/create", middleware.PostWithAuth(machine.CreateMachine))
-	mux.HandleFunc("/api/v1/machine/connect", middleware.PostWithAuth(machine.WebSocketHandler))
-	mux.HandleFunc("/api/v1/machine/my-machines", middleware.GetWithAuth(machine.GetMyMachines))
+	mux.HandleFunc("/api/v1/machine/connect", middleware.GetWithAuth(machine.WebSocketHandler))
+	mux.HandleFunc("/api/v1/machine/owned-machines", middleware.GetWithAuth(machine.GetOwnedMachines))
+	mux.HandleFunc("/api/v1/machine/bought-machines", middleware.GetWithAuth(machine.GetBoughtMachines))
 }
 
 func health(res http.ResponseWriter, req *http.Request) {

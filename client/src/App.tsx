@@ -5,6 +5,8 @@ import Dashboard from './dashboard/WelcomePage';
 import Feed from './tradeAndOparate/Feed';
 import MachinePage from './tradeAndOparate/MachinePage';
 import MyMachinesPage from './tradeAndOparate/MyMachinesPage';
+import AssignMachine from './tradeAndOparate/AssignMachine';
+import BoughtMachines from './tradeAndOparate/BoughtMachines';
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/feed" element={<Feed />} />
         <Route path="/machine" element={<MachinePage />} />
         <Route path="/my-machines" element={<MyMachinesPage />} />
+        <Route path="/assign-machine" element={<AssignMachine />} />
+        <Route path="/assigned-machines" element={<BoughtMachines />} />
       </Routes>
     </BrowserRouter>
   );

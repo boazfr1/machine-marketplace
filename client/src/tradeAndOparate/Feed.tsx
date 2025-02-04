@@ -4,14 +4,8 @@ import "./Feed.css";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../dashboard/SideBar";
 import api from "../api";
+import { MachineType } from "../global/types";
 
-
-type MachineType = {
-    Name: string;
-    RAM: number;
-    CPU: number;
-    Storage: number;
-};
 
 const Feed = () => {
     const [availableMachine, setAvailableMachine] = useState<MachineType[]>([]);
@@ -24,6 +18,7 @@ const Feed = () => {
     const getAllAvailableMachine = async () => {
         try {
             const { data } = await api<MachineType[]>('/api/v1/machine');
+            console.log("data = ", data);
             setAvailableMachine(data);
         } finally {
             setIsLoading(false);
@@ -54,9 +49,10 @@ const Feed = () => {
                     >
                         <Machine
                             Name={machine.Name}
-                            RAM={machine.RAM}
-                            CPU={machine.CPU}
-                            Storage={machine.Storage}
+                            Ram={machine.Ram}
+                            Cpu={machine.Cpu}
+                            Memory={machine.Memory}
+                            OwnerID={machine.OwnerID}
                         />
                     </div>
                 ))}

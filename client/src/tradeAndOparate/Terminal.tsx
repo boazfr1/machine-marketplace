@@ -7,7 +7,7 @@ import './Terminal.css';
 interface TerminalProps {
     onClose: () => void;
     machineName: string;
-    ownerName: string;
+    ownerName: number;
 }
 
 interface CommandEntry {
@@ -27,6 +27,8 @@ const Terminal: FC<TerminalProps> = ({ onClose, machineName, ownerName}) => {
     const [socketCon, setSocketCon] = useState<WebSocket>();
 
     useEffect(() => {
+        console.log("machineName = ", machineName);
+        console.log("ownerName = ", ownerName);
         connectWebSocket();
 
         return () => {
@@ -47,33 +49,36 @@ const Terminal: FC<TerminalProps> = ({ onClose, machineName, ownerName}) => {
     };
 
     const connectWebSocket = async () => {
+        const ownerNameString = ownerName.toString();
 
         const params = {
-            machineName,
-            ownerName
+            machine_name: machineName,
+            owner_name: ownerNameString
         };
         const queryParams = new URLSearchParams(params).toString();
 
-        const websocket = new WebSocket(`ws://localhost:8080/api/v1/machine/connect?${queryParams}`);
-        
-
-        websocket.onopen = () => {
-            console.log('Connected to WebSocket');
-            websocket.send(JSON.stringify(params));
-        };
-
-        websocket.onmessage = (event) => {
-            const data: socketResponse = JSON.parse(event.data);
-            setPwd(data.location);
-            setCommandHistory([...commandHistory, { command: currentCommand, output: data.response }]);
-            setCurrentCommand('');
-        };
-
-        websocket.onerror = (error) => {
-            console.error('WebSocket error:', error);
-        };
-
-        setSocketCon(websocket);
+        try {
+            const websocket = new WebSocket(`ws://localhost:3001/api/v1/machine/connect?${queryParams}`);
+            websocket.onopen = () => {
+                console.log('Connected to WebSocket');
+                websocket.send(JSON.stringify(params));
+            };
+    
+            websocket.onmessage = (event) => {
+                const data: socketResponse = JSON.parse(event.data);
+                setPwd(data.location);
+                setCommandHistory([...commandHistory, { command: currentCommand, output: data.response }]);
+                setCurrentCommand('');
+            };
+    
+            websocket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+    
+            setSocketCon(websocket);
+        } catch (error) {
+            console.error('WebSocket connection error:', error);
+        }
     };
 
     

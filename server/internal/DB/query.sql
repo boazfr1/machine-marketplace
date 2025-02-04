@@ -40,7 +40,7 @@ SELECT * FROM machines WHERE id = $1;
 SELECT * FROM machines WHERE owner_id = $1;
 
 -- name: ListMachinesByBuyerID :many
-SELECT ram, cpu, memory, name FROM machines WHERE buyer_id = $1;
+SELECT ram, cpu, memory, name, owner_id FROM machines WHERE buyer_id = $1;
 
 -- name: ListAvailableMachines :many
 SELECT * FROM machines WHERE buyer_id IS NULL;
@@ -52,7 +52,5 @@ WHERE id = $3 AND buyer_id IS NULL
 RETURNING *;
 
 -- name: GetMachineByNameAndOwner :one
-SELECT m.* 
-FROM machines m
-JOIN users u ON m.owner_id = u.id
-WHERE m.name = $1 AND u.name = $2;
+SELECT * FROM machines 
+WHERE name = $1 AND owner_id = $2;

@@ -100,7 +100,25 @@ func GetMachineByID(res http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(res).Encode(machine)
 }
 
-func GetMyMachines(res http.ResponseWriter, req *http.Request) {
+func GetOwnedMachines(res http.ResponseWriter, req *http.Request) {
+	claims := req.Context().Value(middleware.ClaimsContextKey).(*jwt.StandardClaims)
+
+	ownerID, err := strconv.Atoi(claims.Issuer)
+	if err != nil {
+		http.Error(res, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	machines, err := database.Queries.ListMachinesByOwnerID(req.Context(), int32(ownerID))
+	if err != nil {
+		http.Error(res, "Failed to get machines list", http.StatusInternalServerError)
+		return
+	}
+	fmt.Println(machines)
+	json.NewEncoder(res).Encode(machines)
+}
+
+func GetBoughtMachines(res http.ResponseWriter, req *http.Request) {
 	claims := req.Context().Value(middleware.ClaimsContextKey).(*jwt.StandardClaims)
 
 	num, err := strconv.Atoi(claims.Issuer)
@@ -109,17 +127,16 @@ func GetMyMachines(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	ownerID := sql.NullInt32{
+	buyerID := sql.NullInt32{
 		Int32: int32(num),
 		Valid: true,
 	}
 
-	machines, err := database.Queries.ListMachinesByBuyerID(req.Context(), ownerID)
+	machines, err := database.Queries.ListMachinesByBuyerID(req.Context(), buyerID)
 	if err != nil {
 		http.Error(res, "Failed to get machines list", http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(machines)
 	json.NewEncoder(res).Encode(machines)
 }
 

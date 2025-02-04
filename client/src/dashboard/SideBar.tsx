@@ -14,31 +14,23 @@ const Sidebar = () => {
 
   const menuItems = [
     { icon: '📊', label: 'Feed', id: 'feed' },
-    { icon: '🔧', label: 'Assign Machine', id: 'assign' },
-    { icon: '💻', label: 'My Machines', id: 'my-machines' },
-    { icon: '🖥️', label: 'Assigned Machines', id: 'assigned' }
+    { icon: '🔧', label: 'Add Machine', id: 'assign' },
+    { icon: '💻', label: 'Owned Machines', id: 'my-machines' },
+    { icon: '🖥️', label: 'Bought Machines', id: 'assigned' }
   ];
 
   const eventHandler = (menuID: number) => {
     switch (menuID) {
       case 0:
-        console.log("/feed = ", menuID);
-
         navigate('/feed');
         break;
       case 1:
-        console.log("/assign-machine = ", menuID);
-
         navigate('/assign-machine');
         break;
-      case 2:
-        console.log("my-machines = ", menuID);
-        
+      case 2:        
         navigate('/my-machines');
         break;
-      case 4:
-        console.log("/assigned-machines ", menuID);
-        
+      case 3:        
         navigate('/assigned-machines');
         break;
       default:

@@ -1,0 +1,29 @@
+/* CreateMachine.css */
+.create-machine-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .form-paper {
+    padding: 2rem;
+  }
+  
+  .alert-message {
+    margin-bottom: 1rem;
+  }
+  
+  .submit-button {
+    margin-top: 2rem !important;
+    height: 48px;
+  }
+  
+  .MuiTextField-root {
+    margin-bottom: 1rem !important;
+  }
+  
+  /* For SSH key text area */
+  .MuiTextField-root textarea {
+    font-family: monospace;
+  }
