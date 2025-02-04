@@ -9,9 +9,9 @@ import {
   Alert,
   CircularProgress
 } from '@mui/material';
-import api from '../api';
-import './AssignMachine.css';
-import Sidebar from '../dashboard/SideBar';
+import api from '../../global/api';
+import './style/AddMachine.css';
+import Sidebar from '../../dashboard/SideBar';
 
 interface MachineFormData {
   name: string;

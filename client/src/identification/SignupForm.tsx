@@ -1,6 +1,6 @@
 import React, { useState, FormEvent } from 'react';
-import './SignupForm.css';
-import api, { isAxiosError } from '../api';
+import './style/SignupForm.css';
+import api, { isAxiosError } from '../global/api';
 
 interface SignupFormData {
   Name: string;

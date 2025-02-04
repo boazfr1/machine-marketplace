@@ -1,7 +1,7 @@
 import React, { useState, FormEvent } from 'react';
-import './LoginForm.css';
+import './style/LoginForm.css';
 import { useNavigate } from 'react-router-dom';
-import api, { isAxiosError } from '../api';
+import api, { isAxiosError } from '../global/api';
 
 interface LoginFormData {
   email: string;

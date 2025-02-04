@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import Machine from "./Machine";
-import "./Feed.css";
+import Machine from "../components/Machine";
+import "./style/Feed.css";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../dashboard/SideBar";
-import api from "../api";
-import { MachineType } from "../global/types";
+import Sidebar from "../../dashboard/SideBar";
+import api from "../../global/api";
+import { MachineType } from "../../global/types";
 
 
 const Feed = () => {

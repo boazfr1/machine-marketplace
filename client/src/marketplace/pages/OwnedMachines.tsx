@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import Machine from "./Machine";
-import "./Feed.css";
-import Sidebar from "../dashboard/SideBar";
-import api from "../api";
+import Machine from "../components/Machine";
+import "./style/Feed.css";
+import Sidebar from "../../dashboard/SideBar";
+import api from "../../global/api";
 import { useNavigate } from "react-router-dom";
-import { MachineType } from "../global/types";
+import { MachineType } from "../../global/types";
 
 
-const MyMachinesPage = () => {
+const OwnedMachines = () => {
     const [availableMachine, setAvailableMachine] = useState<MachineType[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -70,4 +70,4 @@ const MyMachinesPage = () => {
     );
 };
 
-export default MyMachinesPage;
+export default OwnedMachines;

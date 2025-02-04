@@ -115,7 +115,7 @@ func insertMockData() error {
 			cpu:     16,
 			memory:  2000,
 			ownerId: 2,
-			buyerId: sql.NullInt32{}, // no buyer
+			buyerId: sql.NullInt32{},
 		},
 	}
 

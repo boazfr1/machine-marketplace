@@ -1,12 +1,12 @@
 // BoughtMachines.tsx
 import { useEffect, useState } from "react";
-import Machine from "./Machine";
-import "./Feed.css";
-import Sidebar from "../dashboard/SideBar";
-import api from "../api";
+import Machine from "../components/Machine";
+import "./style/Feed.css";
+import Sidebar from "../../dashboard/SideBar";
+import api from "../../global/api";
 import { Dialog } from "@mui/material";
-import Terminal from "./Terminal";
-import { MachineType } from "../global/types";
+import Terminal from "../components/Terminal";
+import { MachineType } from "../../global/types";
 
 
 

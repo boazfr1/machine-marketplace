@@ -1,7 +1,7 @@
 import { FC, useState, KeyboardEvent, useEffect } from 'react';
 import { IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import './Terminal.css';
+import './style/Terminal.css';
 
 
 interface TerminalProps {

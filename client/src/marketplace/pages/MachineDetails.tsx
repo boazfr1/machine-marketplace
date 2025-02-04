@@ -1,9 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import './MachinePage.css'
-import { MachineType } from '../global/types';
+import './style/MachineDetails.css'
+import { MachineType } from '../../global/types';
 
-
-const MachinePage = () => {
+const MachineDetails = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const machine = location.state?.machine as MachineType;
@@ -51,4 +50,4 @@ const MachinePage = () => {
     );
 };
 
-export default MachinePage;
+export default MachineDetails;

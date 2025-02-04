@@ -1,6 +1,6 @@
 // Machine.tsx
 import { FC } from "react";
-import "./Machine.css"
+import "./style/Machine.css"
 
 interface MachineProps {
   Ram: number;
