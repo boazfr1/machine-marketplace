@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"fmt"
@@ -8,11 +8,24 @@ import (
 	"machine-marketplace/internal/routes"
 	"machine-marketplace/pkg/database"
 	"net/http"
+	"github.com/jessevdk/go-flags"
 )
+
+type (
+	rootFlags struct {
+		Port string `short:"p" long:"port" description:"Port to listen on" default:"3001"`
+	}
+
+	rootCmd struct {
+		OrderService OrderService `command:"order-service" description:"Order service"`
+		ProcessService ProcessService `command:"process-service" description:"Process service"`
+	}
+
+) 
 
 const PORT = ":3001"
 
-func main() {
+func Main() error {
 
 	if err := database.Init(); err != nil {
 		log.Fatal("Failed to initialize database:", err)

@@ -1,0 +1,229 @@
+.machine-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--neutral-200);
+    overflow: hidden;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    height: fit-content;
+}
+
+.machine-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: var(--primary-blue);
+}
+
+/* Header */
+.machine-card-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--neutral-200);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+}
+
+.machine-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.machine-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--neutral-800);
+    margin: 0 0 var(--spacing-xs) 0;
+    line-height: 1.3;
+    word-break: break-word;
+}
+
+.machine-owner {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.75rem;
+}
+
+.owner-label {
+    color: var(--neutral-500);
+}
+
+.owner-id {
+    color: var(--neutral-700);
+    font-weight: 500;
+    background-color: var(--neutral-100);
+    padding: 2px var(--spacing-xs);
+    border-radius: var(--radius-sm);
+}
+
+.machine-status {
+    flex-shrink: 0;
+}
+
+.status-badge {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.status-available {
+    background-color: rgba(0, 208, 132, 0.1);
+    color: var(--success);
+}
+
+/* Specs */
+.machine-specs {
+    padding: var(--spacing-lg);
+}
+
+.spec-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.spec-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background-color: var(--neutral-50);
+    border-radius: var(--radius-md);
+}
+
+.spec-icon {
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.spec-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.spec-label {
+    font-size: 0.75rem;
+    color: var(--neutral-500);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.spec-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--neutral-800);
+}
+
+/* Footer */
+.machine-footer {
+    padding: var(--spacing-lg);
+    border-top: 1px solid var(--neutral-200);
+    background-color: var(--neutral-50);
+}
+
+.machine-pricing {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
+}
+
+.price-label {
+    font-size: 0.75rem;
+    color: var(--neutral-500);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    font-weight: 500;
+}
+
+.price-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+}
+
+.machine-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.machine-actions .btn {
+    flex: 1;
+    justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .machine-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+
+    .machine-status {
+        align-self: flex-end;
+    }
+
+    .spec-grid {
+        gap: var(--spacing-sm);
+    }
+
+    .spec-item {
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .spec-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+    }
+
+    .machine-actions {
+        flex-direction: column;
+    }
+}
+
+/* Loading state */
+.machine-card.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.machine-card.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Hover effects for actions */
+.machine-actions .btn:hover {
+    transform: translateY(-1px);
+}
+
+.machine-card:hover .machine-actions .btn-primary {
+    background-color: var(--primary-blue-hover);
+}
