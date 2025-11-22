@@ -6,16 +6,10 @@ import (
 
 	machine "machine-marketplace/internal/machine"
 	middleware "machine-marketplace/internal/middleware"
-	user "machine-marketplace/internal/user"
 )
 
 func RouteList(mux *http.ServeMux) {
-	mux.HandleFunc("/api/v1/health", middleware.Get(health))
-	mux.HandleFunc("/api/v1/sign-up", middleware.Post(user.SignUp))
-	mux.HandleFunc("/api/v1/login", middleware.Post(user.Login))
-	mux.HandleFunc("/api/v1/logout", middleware.Post(user.Logout))
 
-	mux.HandleFunc("/api/v1/user", middleware.GetWithAuth(user.User))
 	mux.HandleFunc("/api/v1/machine", middleware.GetWithAuth(machine.ListOfFreeMachines))
 	mux.HandleFunc("/api/v1/machine/create", middleware.PostWithAuth(machine.CreateMachine))
 	mux.HandleFunc("/api/v1/machine/connect", middleware.GetWithAuth(machine.WebSocketHandler))

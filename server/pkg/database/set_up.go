@@ -4,15 +4,20 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
+	"log/slog"
 	database "machine-marketplace/internal/DB/generated"
 	"machine-marketplace/internal/data"
+	"os"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
+var setupLogger = slog.New(slog.NewTextHandler(os.Stdout, nil))
+
 func SetupDatabase() error {
+	setupLogger.Info("SetupDatabase - creating database schema")
+
 	schema := `
 	CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
@@ -37,20 +42,26 @@ func SetupDatabase() error {
 	// Execute schema creation
 	_, err := DB.Exec(schema)
 	if err != nil {
+		setupLogger.Error("SetupDatabase - failed to create schema", "error", err)
 		return fmt.Errorf("error creating schema: %v", err)
 	}
+
+	setupLogger.Info("SetupDatabase - schema created successfully")
 
 	// Check if we need to insert mock data
 	var count int
 	err = DB.QueryRow("SELECT COUNT(*) FROM users").Scan(&count)
 	if err != nil {
+		setupLogger.Error("SetupDatabase - failed to check users count", "error", err)
 		return fmt.Errorf("error checking users count: %v", err)
 	}
 
 	if count == 0 {
+		setupLogger.Info("SetupDatabase - inserting mock data")
 		return insertMockData()
 	}
 
+	setupLogger.Info("SetupDatabase - database already contains data, skipping mock data insertion", "user_count", count)
 	return nil
 }
 
@@ -136,7 +147,7 @@ func insertMockData() error {
 		}
 	}
 
-	log.Println("Mock data inserted successfully")
+	setupLogger.Info("insertMockData - mock data inserted successfully")
 	return nil
 }
 

@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"context"
-	user "machine-marketplace/internal/user"
+	"machine-marketplace/pkg/auth"
 	"net/http"
 )
 
@@ -18,7 +18,7 @@ func WithAuth(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		claims, err := user.ValidateToken(cookie.Value)
+		claims, err := auth.ValidateToken(cookie.Value)
 		if err != nil {
 			http.Error(res, "Unauthorized", http.StatusUnauthorized)
 			return

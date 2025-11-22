@@ -1,6 +1,6 @@
 import React, { useState, FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api, { isAxiosError } from '../global/api';
+import { authApi, isAxiosError } from '../global/api';
 import './AuthPage.css';
 
 interface LoginFormData {
@@ -54,7 +54,7 @@ const LoginPage = () => {
         setErrors({});
 
         try {
-            await api.post('/api/v1/login', formData);
+            await authApi.post('/api/v1/login', formData);
             navigate('/marketplace');
         } catch (error) {
             if (isAxiosError(error)) {
