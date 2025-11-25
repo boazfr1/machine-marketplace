@@ -3,14 +3,9 @@ package machine
 import (
 	json "encoding/json"
 	fmt "fmt"
-	db "machine-marketplace/internal/DB/generated"
-	middleware "machine-marketplace/internal/middleware"
-	database "machine-marketplace/pkg/database"
 	http "net/http"
-	"strconv"
 	sync "sync"
 
-	jwt "github.com/dgrijalva/jwt-go/v4"
 	websocket "github.com/gorilla/websocket"
 	ssh "golang.org/x/crypto/ssh"
 )
@@ -21,9 +16,22 @@ type Connection struct {
 	mutex     sync.Mutex
 }
 
+func NewConnection(ws *websocket.Conn, client *ssh.Client) *Connection {
+	return &Connection{
+		ws:        ws,
+		sshClient: client,
+	}
+}
+
 type ConnectionManager struct {
 	connections map[string]*Connection
 	mutex       sync.RWMutex
+}
+
+func (m *ConnectionManager) AddConnection(host string, conn *Connection) {
+	m.mutex.Lock()
+	m.connections[host] = conn
+	m.mutex.Unlock()
 }
 
 var Manager = &ConnectionManager{
@@ -54,69 +62,7 @@ type returnedMassage struct {
 	Location string `json:"Location"`
 }
 
-func WebSocketHandler(res http.ResponseWriter, req *http.Request) {
-
-	claims := req.Context().Value(middleware.ClaimsContextKey).(*jwt.StandardClaims)
-
-	query := req.URL.Query()
-
-	ownerID, err := strconv.Atoi(query.Get("owner_name"))
-	if err != nil {
-		http.Error(res, "Invalid owner ID", http.StatusBadRequest)
-		return
-	}
-
-	createParams := db.GetMachineByNameAndOwnerParams{
-		Name:    query.Get("machine_name"),
-		OwnerID: int32(ownerID),
-	}
-
-	params, err := database.Queries.GetMachineByNameAndOwner(req.Context(), createParams)
-	if err != nil {
-		fmt.Println("err = ", err)
-		http.Error(res, "Machine not found", http.StatusNotFound)
-		return
-	}
-
-	num, err := strconv.Atoi(claims.Issuer)
-	if err != nil {
-		fmt.Println("err = ", err)
-		http.Error(res, "Unauthorized", http.StatusUnauthorized)
-		return
-	}
-	buyerID := int32(num)
-
-	if params.BuyerID.Int32 != buyerID {
-		http.Error(res, "You are not the owner of this machine", http.StatusForbidden)
-		return
-	}
-
-	wsConn, err := Upgrader.Upgrade(res, req, nil)
-	if err != nil {
-		fmt.Println("Error upgrading:", err)
-		return
-	}
-
-	sshClient, err := CreateSSHClient(params.Host, params.SshUser, params.Key.String)
-	if err != nil {
-		wsConn.Close()
-		fmt.Printf("Error creating SSH client: %v\n", err)
-		return
-	}
-
-	conn := &Connection{
-		ws:        wsConn,
-		sshClient: sshClient,
-	}
-
-	Manager.mutex.Lock()
-	Manager.connections[params.Host] = conn
-	Manager.mutex.Unlock()
-
-	go handleConnection(params.Host, conn)
-}
-
-func handleConnection(host string, conn *Connection) {
+func HandleConnection(host string, conn *Connection) {
 	defer func() {
 		conn.ws.Close()
 		conn.sshClient.Close()

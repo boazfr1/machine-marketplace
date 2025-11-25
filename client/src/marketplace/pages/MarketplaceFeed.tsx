@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MachineCard from "../components/MachineCard";
 import MarketplaceLayout from "../components/MarketplaceLayout";
-import api from "../../global/api";
+import { orderApi } from "../../global/api";
 import { MachineType } from "../../global/types";
 import "./MarketplaceFeed.css";
 
@@ -17,7 +17,7 @@ const MarketplaceFeed = () => {
 
     const getAllAvailableMachines = async () => {
         try {
-            const { data } = await api<MachineType[]>('/api/v1/machine');
+            const { data } = await orderApi<MachineType[]>('/api/v1/order');
             console.log("Available machines:", data);
             setAvailableMachines(data);
         } catch (error) {

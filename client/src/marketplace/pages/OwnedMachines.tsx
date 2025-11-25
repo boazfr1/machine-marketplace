@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Machine from "../components/Machine";
 import "../style/Feed.css";
 import Sidebar from "../../dashboard/SideBar";
-import api from "../../global/api";
+import { orderApi } from "../../global/api";
 import { useNavigate } from "react-router-dom";
 import { MachineType } from "../../global/types";
 
@@ -15,9 +15,9 @@ const OwnedMachines = () => {
 
     const getAllAvailableMachine = async () => {
         try {
-            const { data } = await api<MachineType[]>('/api/v1/machine/owned-machines');
-                setAvailableMachine(data);
-            
+            const { data } = await orderApi<MachineType[]>('/api/v1/order/owned-machines');
+            setAvailableMachine(data);
+
         } catch {
             throw new Error("Failed to get owned machines");
         }

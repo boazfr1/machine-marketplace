@@ -3,7 +3,7 @@ import Machine from "../components/Machine";
 import "../style/Feed.css";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../dashboard/SideBar";
-import api from "../../global/api";
+import { orderApi } from "../../global/api";
 import { MachineType } from "../../global/types";
 
 
@@ -13,11 +13,11 @@ const Feed = () => {
 
     const navigate = useNavigate();
 
-    
+
 
     const getAllAvailableMachine = async () => {
         try {
-            const { data } = await api<MachineType[]>('/api/v1/machine');
+            const { data } = await orderApi<MachineType[]>('/api/v1/order');
             console.log("data = ", data);
             setAvailableMachine(data);
         } finally {
@@ -39,31 +39,31 @@ const Feed = () => {
 
     return (
         <div className="feed-page">
-            <Sidebar/>
+            <Sidebar />
             {availableMachine ?
-            <div className={`feed-container ${isLoading ? 'loading' : ''}`}>
-                {!isLoading && availableMachine.map((machine, index) => (
-                    <div
-                        key={index}
-                        onClick={() => navigateToMachinePage(machine)}
-                    >
-                        <Machine
-                            Name={machine.Name}
-                            Ram={machine.Ram}
-                            Cpu={machine.Cpu}
-                            Memory={machine.Memory}
-                            OwnerID={machine.OwnerID}
-                        />
-                    </div>
-                ))}
-            </div> : 
-            <div>
-                There is no available machines to show
-            </div>
-            }
+                <div className={`feed-container ${isLoading ? 'loading' : ''}`}>
+                    {!isLoading && availableMachine.map((machine, index) => (
+                        <div
+                            key={index}
+                            onClick={() => navigateToMachinePage(machine)}
+                        >
+                            <Machine
+                                Name={machine.Name}
+                                Ram={machine.Ram}
+                                Cpu={machine.Cpu}
+                                Memory={machine.Memory}
+                                OwnerID={machine.OwnerID}
+                            />
+                        </div>
+                    ))}
+                </div> :
                 <div>
-
+                    There is no available machines to show
                 </div>
+            }
+            <div>
+
+            </div>
         </div>
 
     );

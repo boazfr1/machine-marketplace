@@ -46,7 +46,7 @@ func CreateMachine(res http.ResponseWriter, req *http.Request) {
 	}
 	ownerID := int32(num)
 
-	err = triedToConnectForFirstTime(params.Host, params.SshUser, params.Key)
+	err = TriedToConnectForFirstTime(params.Host, params.SshUser, params.Key)
 	if err != nil {
 		http.Error(res, "Failed to connect to machine", http.StatusInternalServerError)
 		return

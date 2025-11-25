@@ -5,4 +5,9 @@ export const authApi: AxiosInstance = axios.create({
   withCredentials: true
 });
 
+export const orderApi: AxiosInstance = axios.create({
+  baseURL: 'http://localhost:3002',
+  withCredentials: true
+});
+
 export { isAxiosError };

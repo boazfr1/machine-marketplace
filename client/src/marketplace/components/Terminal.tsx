@@ -20,7 +20,7 @@ interface socketResponse {
     location: string;
 }
 
-const Terminal: FC<TerminalProps> = ({ onClose, machineName, ownerName}) => {
+const Terminal: FC<TerminalProps> = ({ onClose, machineName, ownerName }) => {
     const [commandHistory, setCommandHistory] = useState<CommandEntry[]>([]);
     const [currentCommand, setCurrentCommand] = useState('');
     const [pwd, setPwd] = useState('')
@@ -58,30 +58,30 @@ const Terminal: FC<TerminalProps> = ({ onClose, machineName, ownerName}) => {
         const queryParams = new URLSearchParams(params).toString();
 
         try {
-            const websocket = new WebSocket(`ws://localhost:3001/api/v1/machine/connect?${queryParams}`);
+            const websocket = new WebSocket(`ws://localhost:3002/api/v1/order/connect?${queryParams}`);
             websocket.onopen = () => {
                 console.log('Connected to WebSocket');
                 websocket.send(JSON.stringify(params));
             };
-    
+
             websocket.onmessage = (event) => {
                 const data: socketResponse = JSON.parse(event.data);
                 setPwd(data.location);
                 setCommandHistory([...commandHistory, { command: currentCommand, output: data.response }]);
                 setCurrentCommand('');
             };
-    
+
             websocket.onerror = (error) => {
                 console.error('WebSocket error:', error);
             };
-    
+
             setSocketCon(websocket);
         } catch (error) {
             console.error('WebSocket connection error:', error);
         }
     };
 
-    
+
     const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && currentCommand) {
             sendCommand();
