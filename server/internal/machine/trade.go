@@ -18,6 +18,7 @@ type MachineParams struct {
 	Name    string `json:"name"`
 	Ram     int32  `json:"ram"`
 	Cpu     int32  `json:"cpu"`
+	Gpu     int32  `json:"gpu"`
 	Memory  int32  `json:"memory"`
 	Key     string `json:"key"`
 	Host    string `json:"host"`
@@ -35,7 +36,7 @@ func CreateMachine(res http.ResponseWriter, req *http.Request) {
 	}
 
 	if params.Name == "" || params.Ram == 0 || params.Cpu == 0 || params.Memory == 0 || params.Key == "" || params.Host == "" || params.SshUser == "" {
-		http.Error(res, "Name, ram, cpu, memory, key, host, and ssh_user are required", http.StatusBadRequest)
+		http.Error(res, "Name, ram, cpu, gpu, memory, key, host, and ssh_user are required", http.StatusBadRequest)
 		return
 	}
 
@@ -56,6 +57,7 @@ func CreateMachine(res http.ResponseWriter, req *http.Request) {
 		Name:    params.Name,
 		Ram:     params.Ram,
 		Cpu:     params.Cpu,
+		Gpu:     params.Gpu,
 		Memory:  params.Memory,
 		Key:     sql.NullString{String: params.Key, Valid: true},
 		OwnerID: ownerID,

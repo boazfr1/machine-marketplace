@@ -3,6 +3,7 @@ package cmd
 import (
 	"machine-marketplace/internal/order"
 	"machine-marketplace/pkg/database"
+	"machine-marketplace/pkg/kafka"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -22,6 +23,14 @@ func (o *OrderService) Setup() order.Module {
 		l.Error("OrderService Execute - failed to initialize database", "error", err)
 		return order.Module{}
 	}
+
+	// Initialize Kafka producer
+	kafkaProducer, err := kafka.New()
+	if err != nil {
+		l.Error("OrderService Execute - failed to initialize Kafka producer", "error", err)
+		return order.Module{}
+	}
+
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{o.AllowedOriginsFrom, o.AllowedOriginsTo},
@@ -30,9 +39,10 @@ func (o *OrderService) Setup() order.Module {
 		AllowCredentials: true,
 	}))
 	return order.Module{
-		P:  o.Port,
-		DB: queries,
-		E:  e,
+		P:             o.Port,
+		DB:            queries,
+		E:             e,
+		KafkaProducer: kafkaProducer,
 	}
 }
 

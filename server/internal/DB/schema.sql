@@ -13,6 +13,7 @@ CREATE TABLE machines (
     owner_id INTEGER NOT NULL REFERENCES users(id),
     ram INTEGER NOT NULL,
     cpu INTEGER NOT NULL,
+    gpu INTEGER NOT NULL DEFAULT 0,
     memory INTEGER NOT NULL,
     key TEXT,
     host VARCHAR(255) NOT NULL,

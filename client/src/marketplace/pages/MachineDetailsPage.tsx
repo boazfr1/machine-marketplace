@@ -1,42 +1,68 @@
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import MarketplaceLayout from '../components/MarketplaceLayout';
-import { MachineType } from '../../global/types';
+import { MachineType, PurchaseRequest, PurchaseResponse } from '../../global/types';
+import { orderApi } from '../../global/api';
 import './MachineDetailsPage.css';
 
 const MachineDetailsPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const machine = location.state?.machine as MachineType;
+  const [selectedDuration, setSelectedDuration] = useState<number>(24);
+  const [isPurchasing, setIsPurchasing] = useState(false);
+  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const [purchaseError, setPurchaseError] = useState<string | null>(null);
 
   if (!machine) {
     navigate('/marketplace');
     return null;
   }
 
-  const handleRentMachine = () => {
-    console.log("Rent machine:", machine.Name);
-    // Add rent logic here
+  const handlePurchaseMachine = async () => {
+    try {
+      setIsPurchasing(true);
+      setPurchaseError(null);
+
+      const purchaseRequest: PurchaseRequest = {
+        machine_id: machine.ID,
+        deal_duration_hours: selectedDuration
+      };
+
+      const { data } = await orderApi.post<PurchaseResponse>('/api/v1/order/buy', purchaseRequest);
+      console.log("Purchase successful:", data);
+
+      setPurchaseSuccess(true);
+      setTimeout(() => {
+        navigate('/purchased-machines');
+      }, 2000);
+    } catch (error: any) {
+      console.error("Purchase failed:", error);
+      setPurchaseError(error.response?.data || "Failed to purchase machine. Please try again.");
+    } finally {
+      setIsPurchasing(false);
+    }
   };
 
   const handleContactOwner = () => {
     console.log("Contact owner:", machine.OwnerID);
-    // Add contact logic here
+    alert("Contact feature coming soon!");
   };
 
   const specs = [
     { icon: '🧠', label: 'CPU Cores', value: machine.Cpu, unit: 'cores' },
     { icon: '💾', label: 'RAM', value: machine.Ram, unit: 'GB' },
+    { icon: '🎮', label: 'GPU', value: machine.Gpu > 0 ? machine.Gpu : 'None', unit: machine.Gpu > 0 ? 'GPUs' : '' },
     { icon: '💿', label: 'Storage', value: machine.Memory, unit: 'GB' },
-    { icon: '⚡', label: 'Performance', value: 'High', unit: '' },
     { icon: '🌐', label: 'Network', value: '1 Gbps', unit: '' },
     { icon: '🔒', label: 'Security', value: 'Enterprise', unit: '' }
   ];
 
   const pricingTiers = [
-    { duration: 'Hourly', price: 0.25, popular: false },
-    { duration: 'Daily', price: 5.50, popular: true, savings: '8%' },
-    { duration: 'Weekly', price: 35.00, popular: false, savings: '17%' },
-    { duration: 'Monthly', price: 120.00, popular: false, savings: '33%' }
+    { duration: 'Daily', hours: 24, price: 5.50, popular: false },
+    { duration: '3 Days', hours: 72, price: 15.00, popular: true, savings: '9%' },
+    { duration: 'Weekly', hours: 168, price: 35.00, popular: false, savings: '17%' },
+    { duration: 'Monthly', hours: 720, price: 120.00, popular: false, savings: '33%' }
   ];
 
   return (
@@ -63,19 +89,34 @@ const MachineDetailsPage = () => {
             </div>
             
             <div className="quick-actions">
-              <button 
+              <button
                 onClick={handleContactOwner}
                 className="btn btn-outline"
               >
                 Contact Owner
               </button>
-              <button 
-                onClick={handleRentMachine}
-                className="btn btn-primary btn-lg"
-              >
-                Rent This Machine
-              </button>
+              {purchaseSuccess ? (
+                <button
+                  className="btn btn-success btn-lg"
+                  disabled
+                >
+                  ✓ Purchase Successful!
+                </button>
+              ) : (
+                <button
+                  onClick={handlePurchaseMachine}
+                  className="btn btn-primary btn-lg"
+                  disabled={isPurchasing}
+                >
+                  {isPurchasing ? 'Processing...' : 'Purchase Machine'}
+                </button>
+              )}
             </div>
+            {purchaseError && (
+              <div className="error-message" style={{ color: 'red', marginTop: '10px' }}>
+                {purchaseError}
+              </div>
+            )}
           </div>
         </div>
 
@@ -148,12 +189,14 @@ const MachineDetailsPage = () => {
 
           <div className="details-sidebar">
             <div className="pricing-card">
-              <h3 className="pricing-title">Pricing Options</h3>
+              <h3 className="pricing-title">Select Rental Duration</h3>
               <div className="pricing-tiers">
                 {pricingTiers.map((tier, index) => (
-                  <div 
-                    key={index} 
-                    className={`pricing-tier ${tier.popular ? 'pricing-tier-popular' : ''}`}
+                  <div
+                    key={index}
+                    className={`pricing-tier ${tier.popular ? 'pricing-tier-popular' : ''} ${selectedDuration === tier.hours ? 'pricing-tier-selected' : ''}`}
+                    onClick={() => setSelectedDuration(tier.hours)}
+                    style={{ cursor: 'pointer' }}
                   >
                     <div className="tier-header">
                       <span className="tier-duration">{tier.duration}</span>
@@ -169,16 +212,29 @@ const MachineDetailsPage = () => {
                   </div>
                 ))}
               </div>
-              
-              <button 
-                onClick={handleRentMachine}
-                className="btn btn-primary w-full btn-lg"
-              >
-                Start Rental
-              </button>
-              
+
+              {purchaseSuccess ? (
+                <button
+                  className="btn btn-success w-full btn-lg"
+                  disabled
+                >
+                  ✓ Purchase Successful!
+                </button>
+              ) : (
+                <button
+                  onClick={handlePurchaseMachine}
+                  className="btn btn-primary w-full btn-lg"
+                  disabled={isPurchasing}
+                >
+                  {isPurchasing ? 'Processing Purchase...' : `Purchase for ${selectedDuration}h`}
+                </button>
+              )}
+
               <div className="pricing-note">
-                <p>All prices include infrastructure costs and 24/7 support</p>
+                <p>Duration: {selectedDuration} hours • Payment processed securely</p>
+                {purchaseError && (
+                  <p style={{ color: 'red', marginTop: '10px' }}>{purchaseError}</p>
+                )}
               </div>
             </div>
 
