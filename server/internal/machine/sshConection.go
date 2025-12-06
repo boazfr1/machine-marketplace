@@ -7,7 +7,7 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-func triedToConnectForFirstTime(host string, user string, privateKeyString string) error {
+func TriedToConnectForFirstTime(host string, user string, privateKeyString string) error {
 	signer, err := ssh.ParsePrivateKey([]byte(privateKeyString))
 	if err != nil {
 		return fmt.Errorf("failed to parse private key: %v", err)
