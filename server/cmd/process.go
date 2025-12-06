@@ -13,12 +13,13 @@ type ProcessService struct {
 func (p *ProcessService) Execute(args []string) error {
 	l.Info("ProcessService Execute - starting process service", "port", p.Port)
 
-	if err := database.InitWithConfig(&p.Config); err != nil {
+	err, queries := database.InitWithConfig(&p.Config)
+	if err != nil {
 		l.Error("ProcessService Execute - failed to initialize database", "error", err)
 		return err
 	}
 
-	err := process.New(p.Port)
+	err = process.New(p.Port, queries)
 	if err != nil {
 		l.Error("ProcessService Execute - failed to start process service", "error", err, "port", p.Port)
 		return err
