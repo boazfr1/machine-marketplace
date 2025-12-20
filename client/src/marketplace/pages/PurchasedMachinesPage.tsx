@@ -22,22 +22,30 @@ const PurchasedMachinesPage = () => {
         // Mock data
         const mockPurchases: PurchasedMachine[] = [
           {
+            ID: 1,
             Name: "AI Training Server",
             Ram: 64,
             Cpu: 32,
+            Gpu: 4,
             Memory: 2000,
             OwnerID: 456,
+            Host: "192.168.1.20",
+            SshUser: "ubuntu",
             purchaseDate: "2024-01-15",
             status: 'active',
             expiryDate: "2024-02-15",
             totalCost: 156.50
           },
           {
+            ID: 2,
             Name: "Data Processing Cluster",
             Ram: 128,
             Cpu: 48,
+            Gpu: 8,
             Memory: 4000,
             OwnerID: 789,
+            Host: "192.168.1.21",
+            SshUser: "admin",
             purchaseDate: "2024-01-10",
             status: 'expired',
             expiryDate: "2024-01-20",

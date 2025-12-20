@@ -57,5 +57,3 @@ func CreateAuthCookie(token string) *http.Cookie {
 		SameSite: http.SameSiteStrictMode,
 	}
 }
-
-

@@ -1,7 +1,7 @@
 import React, { useState, FormEvent } from 'react';
 import './style/LoginForm.css';
 import { useNavigate } from 'react-router-dom';
-import api, { isAxiosError } from '../global/api';
+import { authApi, isAxiosError } from '../global/api';
 
 interface LoginFormData {
   email: string;
@@ -54,8 +54,8 @@ const LoginForm = () => {
     setErrors({});
 
     try {
-      await api.post('/api/v1/login', formData);
-      navigate('/feed');
+      await authApi.post('/api/v1/user/login', formData);
+      navigate('/marketplace');
     } catch (error) {
       if (isAxiosError(error)) {
         setErrors({

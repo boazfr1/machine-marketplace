@@ -17,8 +17,8 @@ const MyMachinesPage = () => {
         
         // Mock data - replace with actual API call
         const mockMachines: MachineType[] = [
-          { Name: "My Development Server", Ram: 32, Cpu: 16, Memory: 1000, OwnerID: 123 },
-          { Name: "ML Training Rig", Ram: 64, Cpu: 24, Memory: 2000, OwnerID: 123 },
+          { ID: 1, Name: "My Development Server", Ram: 32, Cpu: 16, Gpu: 2, Memory: 1000, OwnerID: 123, Host: "192.168.1.10", SshUser: "admin" },
+          { ID: 2, Name: "ML Training Rig", Ram: 64, Cpu: 24, Gpu: 4, Memory: 2000, OwnerID: 123, Host: "192.168.1.11", SshUser: "root" },
         ];
         
         setMyMachines(mockMachines);
@@ -74,6 +74,7 @@ const MyMachinesPage = () => {
                     Name={machine.Name}
                     Ram={machine.Ram}
                     Cpu={machine.Cpu}
+                    Gpu={machine.Gpu}
                     Memory={machine.Memory}
                     OwnerID={machine.OwnerID}
                     showActions={false}

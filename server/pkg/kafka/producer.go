@@ -12,11 +12,11 @@ import (
 )
 
 type PurchaseEvent struct {
-	MachineID       int32     `json:"machine_id"`
-	BuyerID         int32     `json:"buyer_id"`
-	DealExpiration  time.Time `json:"deal_expiration"`
-	PurchaseTime    time.Time `json:"purchase_time"`
-	MachineName     string    `json:"machine_name"`
+	MachineID      int32     `json:"machine_id"`
+	BuyerID        int32     `json:"buyer_id"`
+	DealExpiration time.Time `json:"deal_expiration"`
+	PurchaseTime   time.Time `json:"purchase_time"`
+	MachineName    string    `json:"machine_name"`
 }
 
 type Producer struct {

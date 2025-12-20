@@ -8,16 +8,37 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - server
+      - auth-service
+      - order-service
     networks:
       - app-network
 
-  server:
+  auth-service:
     build:
       context: ./server
       dockerfile: Dockerfile
+    command: ["./main", "auth-service", "--db-host=postgres", "--db-user=postgres", "--db-password=postgres", "--db-name=machine_market"]
     ports:
       - "3001:3001"
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=machine_market
+      - DB_PORT=5432
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  order-service:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    command: ["./main", "order-service", "--db-host=postgres", "--db-user=postgres", "--db-password=postgres", "--db-name=machine_market"]
+    ports:
+      - "3002:3002"
     environment:
       - DB_HOST=postgres
       - DB_USER=postgres

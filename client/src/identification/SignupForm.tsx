@@ -1,6 +1,6 @@
 import React, { useState, FormEvent } from 'react';
 import './style/SignupForm.css';
-import api, { isAxiosError } from '../global/api';
+import { authApi, isAxiosError } from '../global/api';
 
 interface SignupFormData {
   Name: string;
@@ -74,7 +74,7 @@ const SignupForm = () => {
     };
 
     try {
-      await api.post('/api/v1/sign-up', signupData);      
+      await authApi.post('/api/v1/user/signup', signupData);      
     } catch (error) {
       if (isAxiosError(error)) {
         setErrors({
