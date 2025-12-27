@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/segmentio/kafka-go"
@@ -23,8 +22,8 @@ type Producer struct {
 	writer *kafka.Writer
 }
 
-func New() (*Producer, error) {
-	brokerAddress := os.Getenv("KAFKA_BROKER")
+func New(address string) (*Producer, error) {
+	brokerAddress := address
 	if brokerAddress == "" {
 		brokerAddress = "localhost:9092"
 	}

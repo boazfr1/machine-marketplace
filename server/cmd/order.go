@@ -14,6 +14,7 @@ type OrderService struct {
 	database.Config
 	AllowedOriginsFrom string `short:"a" long:"allowed-origins-from" description:"Allowed origins from" default:"http://localhost:5173"`
 	AllowedOriginsTo   string `short:"t" long:"allowed-origins-to" description:"Allowed origins to" default:"http://localhost:3000"`
+	KafkaAddress       string `short:"t" long:"kafka-address" description:"kafka address"`
 }
 
 func (o *OrderService) Setup() order.Module {
@@ -25,11 +26,16 @@ func (o *OrderService) Setup() order.Module {
 	}
 
 	// Initialize Kafka producer
-	kafkaProducer, err := kafka.New()
+	kafkaProducer, err := kafka.New(o.KafkaAddress)
 	if err != nil {
 		l.Error("OrderService Execute - failed to initialize Kafka producer", "error", err)
 		return order.Module{}
 	}
+	defer func() {
+		if err := kafkaProducer.Close(); err != nil {
+			l.Error("OrderService Execute - failed to close Kafka producer", "error", err)
+		}
+	}()
 
 	e := echo.New()
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
