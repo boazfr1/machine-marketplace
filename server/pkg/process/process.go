@@ -6,19 +6,30 @@ import (
 	db "machine-marketplace/internal/DB/generated"
 
 	kafkaPkg "machine-marketplace/pkg/kafka"
+	sshconection "machine-marketplace/pkg/sshConection"
 
 	"github.com/segmentio/kafka-go"
 )
 
 type (
 	Module struct {
-		DB *db.Queries
+		DB        *db.Queries
+		OpenaiKey string
+		Model     string
+	}
+
+	Config struct {
+		DB        *db.Queries
+		OpenaiKey string
+		Model     string
 	}
 )
 
-func New(queries *db.Queries) (*Module, error) {
+func New(config Config) (*Module, error) {
 	return &Module{
-		DB: queries,
+		DB:        config.DB,
+		OpenaiKey: config.OpenaiKey,
+		Model:     config.Model,
 	}, nil
 }
 
@@ -38,12 +49,28 @@ func (m *Module) ProcessMessage(message kafka.Message) error {
 		return err
 	}
 
-
-
 	return nil
 }
 
-
 func (m *Module) setUpVirtualMachine(machineDetails db.Machine) error {
+	ssh, err := sshconection.New(sshconection.Config{
+		Host:      machineDetails.Host,
+		User:      machineDetails.SshUser,
+		Key:       machineDetails.Key.String,
+		OpenaiKey: m.OpenaiKey,
+		Model:     m.Model,
+	})
+	if err != nil {
+		return err
+	}
+	defer ssh.Close()
+
+	result, err := ssh.RunSSHCommand("echo 'Hello, World!'")
+	if err != nil {
+		return err
+	}
+
+	_ = result // Use result if needed for logging or further processing
+
 	return nil
 }

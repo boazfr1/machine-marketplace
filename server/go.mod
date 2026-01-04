@@ -1,6 +1,6 @@
 module machine-marketplace
 
-go 1.24.0
+go 1.24.4
 
 toolchain go1.24.10
 
@@ -15,11 +15,15 @@ require (
 )
 
 require (
+	github.com/dlclark/regexp2 v1.10.0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/klauspost/compress v1.18.1 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
+	github.com/pkoukk/tiktoken-go v0.1.6 // indirect
+	github.com/tmc/langchaingo v0.1.14 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	golang.org/x/net v0.47.0 // indirect
